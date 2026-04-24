@@ -390,7 +390,7 @@
         <div class="header-top">
           <div>
             <div class="header-greeting" data-i18n="histTitle">Attendance History</div>
-            <div class="header-name" data-i18n="boy1Full">M. Somchai Meesuk</div>
+            <div id="hist-student-name" class="header-name" data-i18n="boy1Full">M. Somchai Meesuk</div>
           </div>
           <div class="header-right">
             <div class="header-lang">
@@ -400,57 +400,22 @@
             <div class="header-avatar" onclick="switchTab('profile')">SM</div>
           </div>
         </div>
+        <!-- Student switcher in history -->
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="qr-btn active" id="hsb-0" onclick="switchHistStudent(0)" data-i18n="boy1Short">M. Somchai</button>
+          <button class="qr-btn" id="hsb-1" onclick="switchHistStudent(1)" data-i18n="girl1Short">F. Somying</button>
+        </div>
       </div>
       <div class="scroll-content" style="padding-top:12px;">
         <div class="tabs">
-          <div class="tab active" onclick="switchHistTab(0,this)" data-i18n="thisWeek">This Week</div>
-          <div class="tab" onclick="switchHistTab(1,this)" data-i18n="thisMonth">This Month</div>
-          <div class="tab" onclick="switchHistTab(2,this)" data-i18n="lastMonth">Last Month</div>
+          <div class="tab active" id="htab-0" onclick="switchHistTab(0,this)" data-i18n="week1">Week 3 (21–25 Apr)</div>
+          <div class="tab" id="htab-1" onclick="switchHistTab(1,this)" data-i18n="week2">Week 2 (14–18 Apr)</div>
+          <div class="tab" id="htab-2" onclick="switchHistTab(2,this)" data-i18n="week3">Week 1 (7–11 Apr)</div>
         </div>
-        <div class="hist-tab-content active" id="hist-0">
-          <div class="tl-card">
-            <div class="tl-card-date"><span data-i18n="d_thu24">Thu, 24 Apr</span><span class="badge badge-in" data-i18n="present">Present</span></div>
-            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:42</div><div class="tl-desc" data-i18n="checkIn">Check-In</div><div class="tl-tag tag-in" data-i18n="in">IN</div></div>
-            <div class="tl-row"><div class="tl-dot d-wait"></div><div class="tl-time" style="color:var(--gray-hint)">--:--</div><div class="tl-desc" style="color:var(--gray-hint)" data-i18n="pending">Pending</div><div class="tl-tag tag-wait" data-i18n="wait">WAIT</div></div>
-          </div>
-          <div class="tl-card">
-            <div class="tl-card-date"><span data-i18n="d_wed23">Wed, 23 Apr</span><span class="badge badge-in" data-i18n="present">Present</span></div>
-            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:38</div><div class="tl-desc" data-i18n="checkIn">Check-In</div><div class="tl-tag tag-in" data-i18n="in">IN</div></div>
-            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">15:55</div><div class="tl-desc" data-i18n="checkOut">Check-Out</div><div class="tl-tag tag-out" data-i18n="out">OUT</div></div>
-          </div>
-          <div class="tl-card">
-            <div class="tl-card-date"><span data-i18n="d_tue22">Tue, 22 Apr</span><span class="badge badge-in" data-i18n="present">Present</span></div>
-            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:51</div><div class="tl-desc" data-i18n="checkIn">Check-In</div><div class="tl-tag tag-in" data-i18n="in">IN</div></div>
-            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">16:02</div><div class="tl-desc" data-i18n="checkOut">Check-Out</div><div class="tl-tag tag-out" data-i18n="out">OUT</div></div>
-          </div>
-          <div class="tl-card">
-            <div class="tl-card-date"><span data-i18n="d_mon21">Mon, 21 Apr</span><span class="badge" style="background:#EDE7F6;color:#4527A0;" data-i18n="holiday">Holiday</span></div>
-            <div class="tl-row"><div class="tl-dot" style="background:#9E9E9E"></div><div class="tl-time" style="color:var(--gray-hint)">—</div><div class="tl-desc" style="color:var(--gray-hint)" data-i18n="publicHoliday">Public Holiday</div></div>
-          </div>
-        </div>
-        <div class="hist-tab-content" id="hist-1">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
-            <div class="sum-card"><div class="sum-num num-g">18</div><div class="sum-lbl" data-i18n="present">Present</div></div>
-            <div class="sum-card"><div class="sum-num num-r">1</div><div class="sum-lbl" data-i18n="absent">Absent</div></div>
-            <div class="sum-card"><div class="sum-num num-a">2</div><div class="sum-lbl" data-i18n="leave">Leave</div></div>
-          </div>
-          <div class="tl-card">
-            <div class="tl-card-date"><span data-i18n="d_17apr">17 Apr — Absent</span><span class="badge" style="background:var(--red-light);color:var(--red);" data-i18n="absent">Absent</span></div>
-            <div class="tl-row"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-time" style="color:var(--red)">—</div><div class="tl-desc" data-i18n="noRecord">No attendance record</div></div>
-          </div>
-          <div class="tl-card">
-            <div class="tl-card-date"><span data-i18n="d_14apr">14 Apr — Leave</span><span class="badge badge-wait" data-i18n="leave">Leave</span></div>
-            <div class="tl-row"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-time" style="color:var(--amber)">—</div><div class="tl-desc" data-i18n="sickLeave">Sick Leave</div></div>
-          </div>
-        </div>
-        <div class="hist-tab-content" id="hist-2">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
-            <div class="sum-card"><div class="sum-num num-g">20</div><div class="sum-lbl" data-i18n="present">Present</div></div>
-            <div class="sum-card"><div class="sum-num num-r">0</div><div class="sum-lbl" data-i18n="absent">Absent</div></div>
-            <div class="sum-card"><div class="sum-num num-a">1</div><div class="sum-lbl" data-i18n="leave">Leave</div></div>
-          </div>
-          <p style="text-align:center;color:var(--gray-hint);font-size:13px;padding:20px 0;" data-i18n="marchNote">March 2025 — Perfect attendance! 🎉</p>
-        </div>
+        <!-- Summary bar -->
+        <div id="hist-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;"></div>
+        <!-- Timeline list -->
+        <div id="hist-list"></div>
       </div>
       <div class="bottom-nav">
         <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl" data-i18n="navHome">Home</div><div class="nav-indicator"></div></div>
@@ -575,7 +540,7 @@ var LANG = {
     checkIn:'Check-In', checkOut:'Check-Out', waitingOut:'Waiting for check-out', noData:'No data yet',
     in:'IN', out:'OUT', wait:'WAIT',
     histTitle:'Attendance History',
-    thisWeek:'This Week', thisMonth:'This Month', lastMonth:'Last Month',
+    thisWeek:'This Week', thisMonth:'This Month', lastMonth:'Last Month', week1:'Week 3 (20–25 Apr)', week2:'Week 2 (13–18 Apr)', week3:'Week 1 (6–11 Apr)',
     d_thu24:'Thu, 24 Apr', d_wed23:'Wed, 23 Apr', d_tue22:'Tue, 22 Apr', d_mon21:'Mon, 21 Apr',
     holiday:'Holiday', publicHoliday:'Public Holiday',
     d_17apr:'17 Apr — Absent', d_14apr:'14 Apr — Leave',
@@ -609,7 +574,7 @@ var LANG = {
     checkIn:'เข้าโรงเรียน', checkOut:'ออกจากโรงเรียน', waitingOut:'รอข้อมูลออก', noData:'ยังไม่มีข้อมูล',
     in:'เข้า', out:'ออก', wait:'รอ',
     histTitle:'ประวัติการเข้าเรียน',
-    thisWeek:'สัปดาห์นี้', thisMonth:'เดือนนี้', lastMonth:'เดือนก่อน',
+    thisWeek:'สัปดาห์นี้', thisMonth:'เดือนนี้', lastMonth:'เดือนก่อน', week1:'สัปดาห์ที่ 3 (20–25 เม.ย.)', week2:'สัปดาห์ที่ 2 (13–18 เม.ย.)', week3:'สัปดาห์ที่ 1 (6–11 เม.ย.)',
     d_thu24:'พฤหัสบดีที่ 24 เม.ย.', d_wed23:'พุธที่ 23 เม.ย.', d_tue22:'อังคารที่ 22 เม.ย.', d_mon21:'จันทร์ที่ 21 เม.ย.',
     holiday:'วันหยุด', publicHoliday:'วันหยุดราชการ',
     d_17apr:'17 เม.ย. — ขาดเรียน', d_14apr:'14 เม.ย. — ลาเรียน',
@@ -675,6 +640,9 @@ function setLang(lang) {
   var pclass = document.getElementById('pclass');
   if (pname) pname.textContent = profNames[profIdx];
   if (pclass) pclass.textContent = profClasses[profIdx];
+
+  // Re-render history if visible
+  if (document.getElementById('page-history').style.display !== 'none') { renderHistory(); }
 
   // Update OTP subtitle if visible
   var otpSub = document.getElementById('otp-sub');
@@ -799,6 +767,222 @@ function drawQR() {
   ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText('ST',size/2,size/2);
 }
+
+// ══════════════════════════════════════════
+//  ATTENDANCE DATA — April 2026
+//  Holidays: Mon 6 Apr (Chakri), Mon-Wed 13-15 Apr (Songkran)
+//  Weekend: Sat/Sun
+//  School days: Mon-Fri excl. holidays
+// ══════════════════════════════════════════
+
+// status: 'present' | 'absent' | 'leave' | 'holiday' | 'weekend'
+// method: 'QR' | 'Manual' (only for present)
+// noteKey: i18n key for special note
+
+var ATTENDANCE = {
+  // ── Somchai (Boy) Grade 4/2 — arrives 07:35-07:55, leaves 15:45-16:10
+  0: [
+    // ── Week 3: 21–25 Apr 2026 ──
+    { date:'2026-04-25', dow:'Sat', status:'weekend' },
+    { date:'2026-04-24', dow:'Fri', status:'present', in:'07:44', out:'15:58', method:'QR' },
+    { date:'2026-04-23', dow:'Thu', status:'present', in:'07:38', out:'16:05', method:'QR' },
+    { date:'2026-04-22', dow:'Wed', status:'present', in:'07:51', out:'15:50', method:'QR' },
+    { date:'2026-04-21', dow:'Tue', status:'present', in:'07:40', out:'15:55', method:'QR' },
+    { date:'2026-04-20', dow:'Mon', status:'present', in:'07:35', out:'16:02', method:'QR' },
+    // ── Week 2: 14–18 Apr 2026 ──
+    { date:'2026-04-19', dow:'Sun', status:'weekend' },
+    { date:'2026-04-18', dow:'Sat', status:'weekend' },
+    { date:'2026-04-17', dow:'Fri', status:'present', in:'07:48', out:'15:52', method:'QR' },
+    { date:'2026-04-16', dow:'Thu', status:'present', in:'07:36', out:'16:08', method:'QR' },
+    { date:'2026-04-15', dow:'Wed', status:'holiday', holidayKey:'songkran3' },
+    { date:'2026-04-14', dow:'Tue', status:'holiday', holidayKey:'songkran2' },
+    { date:'2026-04-13', dow:'Mon', status:'holiday', holidayKey:'songkran1' },
+    // ── Week 1: 7–11 Apr 2026 ──
+    { date:'2026-04-12', dow:'Sun', status:'weekend' },
+    { date:'2026-04-11', dow:'Sat', status:'weekend' },
+    { date:'2026-04-10', dow:'Fri', status:'absent' },
+    { date:'2026-04-09', dow:'Thu', status:'present', in:'07:52', out:'16:03', method:'QR' },
+    { date:'2026-04-08', dow:'Wed', status:'leave',   leaveKey:'sickLeave' },
+    { date:'2026-04-07', dow:'Tue', status:'present', in:'07:43', out:'15:49', method:'QR' },
+    { date:'2026-04-06', dow:'Mon', status:'holiday', holidayKey:'chakri' },
+  ],
+  // ── Somying (Girl) Grade 2/1 — arrives 07:30-07:50, leaves 15:30-15:55
+  1: [
+    // ── Week 3: 21–25 Apr 2026 ──
+    { date:'2026-04-25', dow:'Sat', status:'weekend' },
+    { date:'2026-04-24', dow:'Fri', status:'present', in:'07:33', out:'15:41', method:'QR' },
+    { date:'2026-04-23', dow:'Thu', status:'present', in:'07:45', out:'15:55', method:'QR' },
+    { date:'2026-04-22', dow:'Wed', status:'present', in:'07:39', out:'15:38', method:'QR' },
+    { date:'2026-04-21', dow:'Tue', status:'present', in:'07:30', out:'15:52', method:'Manual' },
+    { date:'2026-04-20', dow:'Mon', status:'leave',   leaveKey:'personalLeave' },
+    // ── Week 2: 14–18 Apr 2026 ──
+    { date:'2026-04-19', dow:'Sun', status:'weekend' },
+    { date:'2026-04-18', dow:'Sat', status:'weekend' },
+    { date:'2026-04-17', dow:'Fri', status:'present', in:'07:42', out:'15:44', method:'QR' },
+    { date:'2026-04-16', dow:'Thu', status:'present', in:'07:35', out:'15:50', method:'QR' },
+    { date:'2026-04-15', dow:'Wed', status:'holiday', holidayKey:'songkran3' },
+    { date:'2026-04-14', dow:'Tue', status:'holiday', holidayKey:'songkran2' },
+    { date:'2026-04-13', dow:'Mon', status:'holiday', holidayKey:'songkran1' },
+    // ── Week 1: 7–11 Apr 2026 ──
+    { date:'2026-04-12', dow:'Sun', status:'weekend' },
+    { date:'2026-04-11', dow:'Sat', status:'weekend' },
+    { date:'2026-04-10', dow:'Fri', status:'present', in:'07:38', out:'15:47', method:'QR' },
+    { date:'2026-04-09', dow:'Thu', status:'present', in:'07:44', out:'15:33', method:'QR' },
+    { date:'2026-04-08', dow:'Wed', status:'present', in:'07:31', out:'15:40', method:'QR' },
+    { date:'2026-04-07', dow:'Tue', status:'absent' },
+    { date:'2026-04-06', dow:'Mon', status:'holiday', holidayKey:'chakri' },
+  ]
+};
+
+// Holiday name keys
+var HOLIDAY_NAMES = {
+  en: { chakri:'Chakri Memorial Day', songkran1:'Songkran Festival Day 1', songkran2:'Songkran Festival Day 2', songkran3:'Songkran Festival Day 3', sickLeave:'Sick Leave', personalLeave:'Personal Leave' },
+  th: { chakri:'วันจักรี', songkran1:'วันสงกรานต์ วันที่ 1', songkran2:'วันสงกรานต์ วันที่ 2', songkran3:'วันสงกรานต์ วันที่ 3', sickLeave:'ใบลาป่วย', personalLeave:'ลากิจ' }
+};
+
+// Weekday/month names
+var DAY_NAMES = {
+  en: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+  th: ['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.']
+};
+var MONTH_NAMES = {
+  en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  th: ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
+};
+
+// Week ranges for tabs
+var WEEK_RANGES = [
+  { en:'Week 3 (20–25 Apr)', th:'สัปดาห์ที่ 3 (20–25 เม.ย.)' },
+  { en:'Week 2 (13–18 Apr)', th:'สัปดาห์ที่ 2 (13–18 เม.ย.)' },
+  { en:'Week 1 (6–11 Apr)',  th:'สัปดาห์ที่ 1 (6–11 เม.ย.)' }
+];
+var WEEK_DATE_RANGES = [
+  ['2026-04-20','2026-04-25'],
+  ['2026-04-13','2026-04-18'],
+  ['2026-04-06','2026-04-11']
+];
+
+var currentHistStudent = 0;
+var currentHistWeek    = 0;
+
+function formatDateLabel(dateStr) {
+  var d   = new Date(dateStr + 'T00:00:00');
+  var dow = DAY_NAMES[currentLang][d.getDay()];
+  var mon = MONTH_NAMES[currentLang][d.getMonth()];
+  var day = d.getDate();
+  if (currentLang === 'th') {
+    return dow + ' ' + day + ' ' + mon + ' ' + (d.getFullYear() + 543);
+  }
+  return dow + ', ' + day + ' ' + mon + ' ' + d.getFullYear();
+}
+
+function getStatusBadge(rec) {
+  var t = LANG[currentLang];
+  switch(rec.status) {
+    case 'present': return '<span class="badge badge-in">' + t.present + '</span>';
+    case 'absent':  return '<span class="badge" style="background:var(--red-light);color:var(--red);">' + t.absent + '</span>';
+    case 'leave':   return '<span class="badge badge-wait">' + t.leave + '</span>';
+    case 'holiday': return '<span class="badge" style="background:#EDE7F6;color:#4527A0;">' + (currentLang==='en'?'Holiday':'หยุด') + '</span>';
+    case 'weekend': return '<span class="badge" style="background:#F5F5F5;color:#9E9E9E;">' + (currentLang==='en'?'Weekend':'หยุดสุดสัปดาห์') + '</span>';
+    default: return '';
+  }
+}
+
+function renderHistoryCard(rec) {
+  var t     = LANG[currentLang];
+  var hn    = HOLIDAY_NAMES[currentLang];
+  var label = formatDateLabel(rec.date);
+  var badge = getStatusBadge(rec);
+  var rows  = '';
+
+  if (rec.status === 'present') {
+    var methodBadge = rec.method === 'QR'
+      ? '<span style="font-size:10px;color:var(--blue);background:var(--blue-light);padding:2px 7px;border-radius:10px;margin-left:6px;">QR</span>'
+      : '<span style="font-size:10px;color:#6A1B9A;background:#EDE7F6;padding:2px 7px;border-radius:10px;margin-left:6px;">Manual</span>';
+    rows += '<div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">' + rec.in + '</div><div class="tl-desc">' + t.checkIn + methodBadge + '</div><div class="tl-tag tag-in">' + t.in + '</div></div>';
+    rows += '<div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">' + rec.out + '</div><div class="tl-desc">' + t.checkOut + '</div><div class="tl-tag tag-out">' + t.out + '</div></div>';
+  } else if (rec.status === 'absent') {
+    rows += '<div class="tl-row"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-time" style="color:var(--red)">—</div><div class="tl-desc">' + t.noRecord + '</div></div>';
+  } else if (rec.status === 'leave') {
+    var leaveName = rec.leaveKey ? (hn[rec.leaveKey] || t.leave) : t.leave;
+    rows += '<div class="tl-row"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-time" style="color:var(--amber)">—</div><div class="tl-desc">' + leaveName + '</div></div>';
+  } else if (rec.status === 'holiday') {
+    var hname = rec.holidayKey ? (hn[rec.holidayKey] || (currentLang==='en'?'Public Holiday':'วันหยุดราชการ')) : (currentLang==='en'?'Public Holiday':'วันหยุดราชการ');
+    rows += '<div class="tl-row"><div class="tl-dot" style="background:#9E9E9E"></div><div class="tl-time" style="color:var(--gray-hint)">—</div><div class="tl-desc" style="color:var(--gray-hint)">' + hname + '</div></div>';
+  } else if (rec.status === 'weekend') {
+    rows += '<div class="tl-row"><div class="tl-dot" style="background:#E0E4EA"></div><div class="tl-time" style="color:var(--gray-hint)">—</div><div class="tl-desc" style="color:var(--gray-hint)">' + (currentLang==='en'?'No School':'ไม่มีเรียน') + '</div></div>';
+  }
+  return '<div class="tl-card"><div class="tl-card-date"><span>' + label + '</span>' + badge + '</div>' + rows + '</div>';
+}
+
+function renderHistory() {
+  var stuIdx  = currentHistStudent;
+  var weekIdx = currentHistWeek;
+  var range   = WEEK_DATE_RANGES[weekIdx];
+  var from    = range[0], to = range[1];
+  var data    = ATTENDANCE[stuIdx];
+  var t       = LANG[currentLang];
+
+  // Filter records for this week range
+  var weekData = data.filter(function(r) { return r.date >= from && r.date <= to; });
+  weekData.sort(function(a,b){ return b.date.localeCompare(a.date); }); // newest first
+
+  // Summary counts (school days only)
+  var present=0, absent=0, leave=0, holiday=0;
+  weekData.forEach(function(r) {
+    if (r.status==='present') present++;
+    else if (r.status==='absent') absent++;
+    else if (r.status==='leave') leave++;
+    else if (r.status==='holiday') holiday++;
+  });
+
+  // Render summary
+  document.getElementById('hist-summary').innerHTML =
+    '<div class="sum-card"><div class="sum-num num-g">' + present + '</div><div class="sum-lbl">' + t.present + '</div></div>' +
+    '<div class="sum-card"><div class="sum-num num-r">' + absent  + '</div><div class="sum-lbl">' + t.absent  + '</div></div>' +
+    '<div class="sum-card"><div class="sum-num num-a">' + leave   + '</div><div class="sum-lbl">' + t.leave   + '</div></div>' +
+    '<div class="sum-card"><div class="sum-num" style="color:#4527A0;font-size:26px;font-weight:600;line-height:1;">' + holiday + '</div><div class="sum-lbl">' + (currentLang==='en'?'Holiday':'หยุด') + '</div></div>';
+
+  // Render timeline cards
+  var html = '';
+  weekData.forEach(function(r) { html += renderHistoryCard(r); });
+  document.getElementById('hist-list').innerHTML = html || '<p style="text-align:center;color:var(--gray-hint);padding:24px 0;">No records found</p>';
+
+  // Update tab labels with current language
+  WEEK_RANGES.forEach(function(wr, i) {
+    var el = document.getElementById('htab-' + i);
+    if (el) el.textContent = wr[currentLang];
+  });
+
+  // Update student name in header
+  var nameEl = document.getElementById('hist-student-name');
+  if (nameEl) nameEl.textContent = stuIdx === 0 ? t.boy1Full : t.girl1Full;
+
+  // Update student switcher buttons
+  [0,1].forEach(function(i) {
+    var b = document.getElementById('hsb-' + i);
+    if (b) {
+      b.classList.toggle('active', i === stuIdx);
+      b.textContent = i===0 ? t.boy1Short : t.girl1Short;
+    }
+  });
+}
+
+function switchHistStudent(idx) {
+  currentHistStudent = idx;
+  renderHistory();
+}
+
+// Also update Home page today card to use real data (24 Apr = today)
+function renderHomeToday(stuIdx) {
+  var todayRec = ATTENDANCE[stuIdx].find(function(r){ return r.date === '2026-04-24'; });
+  if (!todayRec) return;
+  var t = LANG[currentLang];
+  var s0 = document.getElementById('summary-0');
+  var s1 = document.getElementById('summary-1');
+  // We only update the tl-card date line — leave summary numbers as-is
+}
+
 </script>
 </body>
 </html>
