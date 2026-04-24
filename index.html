@@ -675,6 +675,8 @@ function backToPhone() {
 function goToApp() {
   document.getElementById('screen-login').classList.remove('active');
   document.getElementById('screen-app').classList.add('active');
+  currentHistStudent = 0;
+  currentHistWeek    = 0;
   switchTab('home');
 }
 function logout() {
@@ -691,7 +693,8 @@ function switchTab(tab) {
     var pg = document.getElementById('page-' + t);
     pg.style.display = t === tab ? 'flex' : 'none';
   });
-  if (tab === 'qr') setTimeout(drawQR, 80);
+  if (tab === 'qr')      setTimeout(drawQR, 80);
+  if (tab === 'history') setTimeout(renderHistory, 50);
 }
 
 // ── Student select ──
@@ -704,9 +707,10 @@ function selectStu(idx) {
 
 // ── History tabs ──
 function switchHistTab(idx, el) {
-  document.querySelectorAll('.hist-tab-content').forEach(function(c,i) { c.classList.toggle('active', i === idx); });
+  currentHistWeek = idx;
   document.querySelectorAll('.tabs .tab').forEach(function(t) { t.classList.remove('active'); });
   el.classList.add('active');
+  renderHistory();
 }
 
 // ── Profile switcher ──
@@ -857,9 +861,9 @@ var WEEK_RANGES = [
   { en:'Week 1 (6–11 Apr)',  th:'สัปดาห์ที่ 1 (6–11 เม.ย.)' }
 ];
 var WEEK_DATE_RANGES = [
-  ['2026-04-20','2026-04-25'],
-  ['2026-04-13','2026-04-18'],
-  ['2026-04-06','2026-04-11']
+  ['2026-04-20','2026-04-26'],
+  ['2026-04-13','2026-04-19'],
+  ['2026-04-06','2026-04-12']
 ];
 
 var currentHistStudent = 0;
