@@ -1,299 +1,252 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>SchoolTrack — ระบบติดตามการเข้าเรียน</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>SchoolTrack — Attendance Tracking System</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --blue: #1565C0;
-    --blue-light: #E3F2FD;
-    --blue-mid: #42A5F5;
-    --green: #2E7D32;
-    --green-light: #E8F5E9;
-    --red: #C62828;
-    --red-light: #FFEBEE;
-    --amber: #E65100;
-    --amber-light: #FFF3E0;
-    --gray-bg: #F4F6F9;
-    --gray-card: #FFFFFF;
-    --gray-border: #E0E4EA;
-    --gray-text: #5F6368;
-    --gray-hint: #9AA0A6;
-    --text: #1A1A2E;
-    --radius: 14px;
-    --radius-sm: 10px;
+    --blue:#1565C0; --blue-light:#E3F2FD; --blue-mid:#42A5F5;
+    --green:#2E7D32; --green-light:#E8F5E9;
+    --red:#C62828; --red-light:#FFEBEE;
+    --amber:#E65100; --amber-light:#FFF3E0;
+    --gray-bg:#F4F6F9; --gray-card:#FFFFFF;
+    --gray-border:#E0E4EA; --gray-text:#5F6368; --gray-hint:#9AA0A6;
+    --text:#1A1A2E; --radius:14px; --radius-sm:10px;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
   body {
-    font-family: 'Sarabun', sans-serif;
-    background: #0D1B3E;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 24px 16px;
+    font-family:'Inter','Sarabun',sans-serif;
+    background:#0D1B3E;
+    display:flex; justify-content:center; align-items:flex-start;
+    min-height:100vh; padding:24px 16px;
   }
+  body.lang-th { font-family:'Sarabun','Inter',sans-serif; }
 
-  /* ─── Phone shell ─── */
-  .phone {
-    width: 375px;
-    min-height: 780px;
-    background: var(--gray-bg);
-    border-radius: 36px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+  /* ── Phone shell ── */
+  .phone { width:375px; min-height:780px; background:var(--gray-bg); border-radius:36px; overflow:hidden; position:relative; box-shadow:0 40px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.08); }
+  .screen { display:none; flex-direction:column; height:780px; }
+  .screen.active { display:flex; }
+
+  /* ── Lang toggle pill ── */
+  .lang-pill {
+    position:absolute; top:14px; right:16px; z-index:100;
+    display:flex; background:rgba(255,255,255,0.15); border-radius:20px;
+    border:1px solid rgba(255,255,255,0.25); overflow:hidden;
   }
+  .lang-pill button {
+    padding:5px 12px; font-size:11px; font-weight:600; border:none;
+    background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;
+    font-family:inherit; transition:all 0.2s; letter-spacing:0.3px;
+  }
+  .lang-pill button.active { background:rgba(255,255,255,0.3); color:#fff; }
 
-  /* ─── Screen pages ─── */
-  .screen { display: none; flex-direction: column; height: 780px; }
-  .screen.active { display: flex; }
-
-  /* ─── LOGIN ─── */
+  /* ── LOGIN ── */
   #screen-login {
-    background: linear-gradient(160deg, #0D1B3E 0%, #1565C0 60%, #1E88E5 100%);
-    justify-content: space-between;
-    padding: 60px 32px 48px;
+    background:linear-gradient(160deg,#0D1B3E 0%,#1565C0 60%,#1E88E5 100%);
+    justify-content:space-between; padding:60px 32px 48px;
   }
-  .login-logo { text-align: center; }
+  .login-logo { text-align:center; }
   .login-logo .icon-circle {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    margin: 0 auto 16px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
-    border: 1.5px solid rgba(255,255,255,0.25);
+    width:80px; height:80px; border-radius:50%;
+    background:rgba(255,255,255,0.15); margin:0 auto 16px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:36px; border:1.5px solid rgba(255,255,255,0.25);
   }
-  .login-logo h1 { color: #fff; font-size: 26px; font-weight: 600; letter-spacing: 0.5px; }
-  .login-logo p { color: rgba(255,255,255,0.65); font-size: 14px; margin-top: 6px; }
-
-  .login-form { background: #fff; border-radius: 24px; padding: 28px 24px; }
-  .login-form h2 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .login-form .sub { font-size: 13px; color: var(--gray-text); margin-bottom: 24px; }
-
-  .field-label { font-size: 12px; color: var(--gray-text); margin-bottom: 6px; font-weight: 500; }
+  .login-logo h1 { color:#fff; font-size:26px; font-weight:600; letter-spacing:0.5px; }
+  .login-logo p { color:rgba(255,255,255,0.65); font-size:14px; margin-top:6px; }
+  .login-form { background:#fff; border-radius:24px; padding:28px 24px; }
+  .login-form h2 { font-size:18px; font-weight:600; color:var(--text); margin-bottom:6px; }
+  .login-form .sub { font-size:13px; color:var(--gray-text); margin-bottom:24px; }
+  .field-label { font-size:12px; color:var(--gray-text); margin-bottom:6px; font-weight:500; }
   .field-input {
-    width: 100%; padding: 13px 16px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--gray-border); font-family: 'Sarabun', sans-serif;
-    font-size: 16px; color: var(--text); background: #FAFBFC;
-    margin-bottom: 16px; outline: none;
-    transition: border-color 0.2s;
+    width:100%; padding:13px 16px; border-radius:var(--radius-sm);
+    border:1.5px solid var(--gray-border); font-family:inherit;
+    font-size:16px; color:var(--text); background:#FAFBFC;
+    margin-bottom:16px; outline:none; transition:border-color 0.2s;
   }
-  .field-input:focus { border-color: var(--blue); background: #fff; }
-
-  .otp-row { display: flex; gap: 6px; margin-bottom: 20px; }
+  .field-input:focus { border-color:var(--blue); background:#fff; }
+  .otp-row { display:flex; gap:6px; margin-bottom:20px; }
   .otp-box {
-    flex: 1; min-width: 0; height: 50px; border-radius: 10px;
-    border: 1.5px solid var(--gray-border); background: #FAFBFC;
-    text-align: center; font-size: 20px; font-weight: 600;
-    color: var(--text); font-family: 'Sarabun', sans-serif;
-    outline: none; transition: border-color 0.2s;
+    flex:1; min-width:0; height:50px; border-radius:10px;
+    border:1.5px solid var(--gray-border); background:#FAFBFC;
+    text-align:center; font-size:20px; font-weight:600;
+    color:var(--text); font-family:inherit; outline:none; transition:border-color 0.2s;
   }
-  .otp-box:focus { border-color: var(--blue); background: #fff; }
-
+  .otp-box:focus { border-color:var(--blue); background:#fff; }
   .btn-primary {
-    width: 100%; padding: 15px; border-radius: var(--radius-sm);
-    background: var(--blue); color: #fff; border: none;
-    font-family: 'Sarabun', sans-serif; font-size: 16px; font-weight: 600;
-    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+    width:100%; padding:15px; border-radius:var(--radius-sm);
+    background:var(--blue); color:#fff; border:none;
+    font-family:inherit; font-size:16px; font-weight:600;
+    cursor:pointer; transition:opacity 0.15s,transform 0.1s;
   }
-  .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-primary:active { transform:scale(0.98); opacity:0.9; }
   .btn-outline {
-    width: 100%; padding: 13px; border-radius: var(--radius-sm);
-    background: transparent; color: var(--blue); border: 1.5px solid var(--blue);
-    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 500;
-    cursor: pointer; margin-top: 10px;
+    width:100%; padding:13px; border-radius:var(--radius-sm);
+    background:transparent; color:var(--blue); border:1.5px solid var(--blue);
+    font-family:inherit; font-size:14px; font-weight:500; cursor:pointer; margin-top:10px;
   }
 
-  /* ─── Main app shell ─── */
-  #screen-app {
-    background: var(--gray-bg);
-    flex-direction: column;
+  /* ── App shell ── */
+  #screen-app { background:var(--gray-bg); flex-direction:column; }
+  .app-header { background:linear-gradient(135deg,#0D1B3E 0%,#1565C0 100%); padding:48px 20px 20px; flex-shrink:0; }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+  .header-greeting { color:rgba(255,255,255,0.7); font-size:13px; }
+  .header-name { color:#fff; font-size:18px; font-weight:600; margin-top:2px; }
+  .header-right { display:flex; align-items:center; gap:8px; }
+  .header-lang {
+    display:flex; background:rgba(255,255,255,0.12); border-radius:16px;
+    border:1px solid rgba(255,255,255,0.2); overflow:hidden;
   }
-
-  .app-header {
-    background: linear-gradient(135deg, #0D1B3E 0%, #1565C0 100%);
-    padding: 48px 20px 20px;
-    flex-shrink: 0;
+  .header-lang button {
+    padding:4px 10px; font-size:10px; font-weight:600; border:none;
+    background:transparent; color:rgba(255,255,255,0.65); cursor:pointer;
+    font-family:inherit; transition:all 0.2s;
   }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-  .header-greeting { color: rgba(255,255,255,0.7); font-size: 13px; }
-  .header-name { color: #fff; font-size: 18px; font-weight: 600; margin-top: 2px; }
+  .header-lang button.active { background:rgba(255,255,255,0.25); color:#fff; }
   .header-avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.3);
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 600; font-size: 14px; cursor: pointer;
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(255,255,255,0.2); border:1.5px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:600; font-size:13px; cursor:pointer;
   }
-
   .notif-pill {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 40px; padding: 8px 14px;
-    display: flex; align-items: center; gap: 10px;
-    cursor: pointer;
+    background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2);
+    border-radius:40px; padding:8px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;
   }
-  .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #69F0AE; flex-shrink: 0; animation: pulse 2s infinite; }
+  .notif-dot { width:8px; height:8px; border-radius:50%; background:#69F0AE; flex-shrink:0; animation:pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
-  .notif-pill-text { color: #fff; font-size: 13px; line-height: 1.3; }
-  .notif-pill-text strong { display: block; font-weight: 500; }
-  .notif-pill-time { color: rgba(255,255,255,0.6); font-size: 11px; }
+  .notif-pill-text { color:#fff; font-size:13px; line-height:1.3; }
+  .notif-pill-text strong { display:block; font-weight:500; }
+  .notif-pill-time { color:rgba(255,255,255,0.6); font-size:11px; }
 
-  .scroll-content { flex: 1; overflow-y: auto; padding: 16px 16px 80px; -webkit-overflow-scrolling: touch; }
-  .scroll-content::-webkit-scrollbar { display: none; }
+  .scroll-content { flex:1; overflow-y:auto; padding:16px 16px 80px; -webkit-overflow-scrolling:touch; }
+  .scroll-content::-webkit-scrollbar { display:none; }
+  .section-lbl { font-size:11px; font-weight:600; color:var(--gray-hint); letter-spacing:0.8px; text-transform:uppercase; margin:0 0 10px; }
 
-  /* ─── Section label ─── */
-  .section-lbl {
-    font-size: 11px; font-weight: 600; color: var(--gray-hint);
-    letter-spacing: 0.8px; text-transform: uppercase; margin: 0 0 10px;
-  }
-
-  /* ─── Student selector ─── */
-  .students-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  /* ── Student cards ── */
+  .students-row { display:flex; gap:10px; margin-bottom:20px; }
   .student-card {
-    flex: 1; background: var(--gray-card); border-radius: var(--radius);
-    border: 1.5px solid var(--gray-border); padding: 14px 10px;
-    text-align: center; cursor: pointer; transition: all 0.2s;
+    flex:1; background:var(--gray-card); border-radius:var(--radius);
+    border:1.5px solid var(--gray-border); padding:14px 10px; text-align:center; cursor:pointer; transition:all 0.2s;
   }
-  .student-card.sel { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,101,192,0.1); }
-  .stu-avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 600; margin: 0 auto 8px;
-  }
-  .av-b { background: var(--blue-light); color: var(--blue); }
-  .av-p { background: #FCE4EC; color: #C62828; }
-  .stu-name { font-size: 12px; font-weight: 600; color: var(--text); }
-  .stu-class { font-size: 11px; color: var(--gray-text); margin: 2px 0 6px; }
-  .badge { font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: 500; display: inline-block; }
-  .badge-in { background: var(--green-light); color: var(--green); }
-  .badge-wait { background: var(--amber-light); color: var(--amber); }
+  .student-card.sel { border-color:var(--blue); box-shadow:0 0 0 3px rgba(21,101,192,0.1); }
+  .stu-avatar { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; margin:0 auto 8px; }
+  .av-b { background:var(--blue-light); color:var(--blue); }
+  .av-p { background:#FCE4EC; color:#C62828; }
+  .stu-name { font-size:12px; font-weight:600; color:var(--text); }
+  .stu-class { font-size:11px; color:var(--gray-text); margin:2px 0 6px; }
+  .badge { font-size:10px; padding:3px 10px; border-radius:20px; font-weight:500; display:inline-block; }
+  .badge-in { background:var(--green-light); color:var(--green); }
+  .badge-wait { background:var(--amber-light); color:var(--amber); }
 
-  /* ─── Summary cards ─── */
-  .summary-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }
-  .sum-card { background: var(--gray-card); border-radius: var(--radius-sm); border: 1px solid var(--gray-border); padding: 14px 8px; text-align: center; }
-  .sum-num { font-size: 26px; font-weight: 600; line-height: 1; }
-  .num-g { color: var(--green); }
-  .num-r { color: var(--red); }
-  .num-a { color: var(--amber); }
-  .sum-lbl { font-size: 11px; color: var(--gray-text); margin-top: 4px; }
+  /* ── Summary ── */
+  .summary-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:20px; }
+  .sum-card { background:var(--gray-card); border-radius:var(--radius-sm); border:1px solid var(--gray-border); padding:14px 8px; text-align:center; }
+  .sum-num { font-size:26px; font-weight:600; line-height:1; }
+  .num-g { color:var(--green); } .num-r { color:var(--red); } .num-a { color:var(--amber); }
+  .sum-lbl { font-size:11px; color:var(--gray-text); margin-top:4px; }
 
-  /* ─── Timeline ─── */
-  .tl-card { background: var(--gray-card); border-radius: var(--radius); border: 1px solid var(--gray-border); padding: 16px; margin-bottom: 12px; }
-  .tl-card-date { font-size: 12px; color: var(--gray-text); font-weight: 500; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .tl-row { display: flex; align-items: center; gap: 12px; padding: 6px 0; }
-  .tl-row + .tl-row { border-top: 1px dashed var(--gray-border); margin-top: 2px; }
-  .tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .d-in { background: var(--green); box-shadow: 0 0 0 3px rgba(46,125,50,0.15); }
-  .d-out { background: var(--blue); box-shadow: 0 0 0 3px rgba(21,101,192,0.15); }
-  .d-wait { background: var(--gray-border); }
-  .tl-time { font-size: 14px; font-weight: 600; color: var(--text); min-width: 48px; }
-  .tl-desc { font-size: 13px; color: var(--gray-text); flex: 1; }
-  .tl-tag { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-  .tag-in { background: var(--green-light); color: var(--green); }
-  .tag-out { background: var(--blue-light); color: var(--blue); }
-  .tag-wait { background: #F5F5F5; color: var(--gray-hint); }
+  /* ── Timeline ── */
+  .tl-card { background:var(--gray-card); border-radius:var(--radius); border:1px solid var(--gray-border); padding:16px; margin-bottom:12px; }
+  .tl-card-date { font-size:12px; color:var(--gray-text); font-weight:500; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+  .tl-row { display:flex; align-items:center; gap:12px; padding:6px 0; }
+  .tl-row+.tl-row { border-top:1px dashed var(--gray-border); margin-top:2px; }
+  .tl-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .d-in { background:var(--green); box-shadow:0 0 0 3px rgba(46,125,50,0.15); }
+  .d-out { background:var(--blue); box-shadow:0 0 0 3px rgba(21,101,192,0.15); }
+  .d-wait { background:var(--gray-border); }
+  .tl-time { font-size:14px; font-weight:600; color:var(--text); min-width:48px; }
+  .tl-desc { font-size:13px; color:var(--gray-text); flex:1; }
+  .tl-tag { font-size:10px; font-weight:600; padding:3px 10px; border-radius:20px; }
+  .tag-in { background:var(--green-light); color:var(--green); }
+  .tag-out { background:var(--blue-light); color:var(--blue); }
+  .tag-wait { background:#F5F5F5; color:var(--gray-hint); }
 
-  /* ─── Profile ─── */
-  .profile-hero {
-    background: linear-gradient(135deg, #0D1B3E, #1565C0);
-    padding: 48px 20px 24px;
-    text-align: center; flex-shrink: 0;
-  }
-  .profile-av {
-    width: 72px; height: 72px; border-radius: 50%;
-    background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; font-weight: 600; color: #fff;
-    margin: 0 auto 12px;
-  }
-  .profile-hero h2 { color: #fff; font-size: 20px; font-weight: 600; }
-  .profile-hero p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px; }
+  /* ── Profile ── */
+  .profile-hero { background:linear-gradient(135deg,#0D1B3E,#1565C0); padding:48px 20px 24px; text-align:center; flex-shrink:0; }
+  .profile-av { width:72px; height:72px; border-radius:50%; background:rgba(255,255,255,0.2); border:2px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:600; color:#fff; margin:0 auto 12px; }
+  .profile-hero h2 { color:#fff; font-size:20px; font-weight:600; }
+  .profile-hero p { color:rgba(255,255,255,0.7); font-size:13px; margin-top:4px; }
+  .profile-switcher { display:flex; gap:8px; justify-content:center; margin-top:16px; }
+  .ps-btn { padding:6px 16px; border-radius:20px; font-size:12px; font-family:inherit; cursor:pointer; font-weight:500; border:1.5px solid rgba(255,255,255,0.35); color:rgba(255,255,255,0.8); background:transparent; transition:all 0.2s; }
+  .ps-btn.active { background:rgba(255,255,255,0.25); color:#fff; border-color:rgba(255,255,255,0.6); }
+  .info-card { background:var(--gray-card); border-radius:var(--radius); border:1px solid var(--gray-border); overflow:hidden; margin-bottom:12px; }
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; }
+  .info-row+.info-row { border-top:1px solid var(--gray-border); }
+  .info-key { font-size:13px; color:var(--gray-text); }
+  .info-val { font-size:13px; font-weight:500; color:var(--text); }
 
-  .profile-switcher { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
-  .ps-btn {
-    padding: 6px 16px; border-radius: 20px; font-size: 12px;
-    font-family: 'Sarabun', sans-serif; cursor: pointer; font-weight: 500;
-    border: 1.5px solid rgba(255,255,255,0.35); color: rgba(255,255,255,0.8);
-    background: transparent; transition: all 0.2s;
-  }
-  .ps-btn.active { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.6); }
+  /* ── QR Page ── */
+  .qr-hero { background:linear-gradient(135deg,#0D1B3E 0%,#1565C0 100%); padding:48px 20px 28px; text-align:center; flex-shrink:0; }
+  .qr-hero h2 { color:#fff; font-size:18px; font-weight:600; }
+  .qr-hero p { color:rgba(255,255,255,0.7); font-size:13px; margin-top:4px; }
+  .qr-switcher { display:flex; gap:8px; justify-content:center; margin-top:14px; }
+  .qr-btn { padding:6px 18px; border-radius:20px; font-size:12px; font-weight:500; font-family:inherit; cursor:pointer; border:1.5px solid rgba(255,255,255,0.35); color:rgba(255,255,255,0.8); background:transparent; transition:all 0.2s; }
+  .qr-btn.active { background:rgba(255,255,255,0.25); color:#fff; border-color:rgba(255,255,255,0.6); }
+  .qr-body { flex:1; overflow-y:auto; padding:20px 16px 80px; display:flex; flex-direction:column; align-items:center; }
+  .qr-card { background:#fff; border-radius:20px; border:1px solid var(--gray-border); padding:24px 20px 20px; width:100%; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 24px rgba(21,101,192,0.08); }
+  .qr-wrap { background:#fff; padding:12px; border-radius:12px; border:2px solid var(--blue-light); margin-bottom:16px; }
+  .qr-name { font-size:17px; font-weight:600; color:var(--text); margin-bottom:4px; }
+  .qr-meta { font-size:13px; color:var(--gray-text); margin-bottom:16px; }
+  .qr-id-pill { background:var(--blue-light); color:var(--blue); font-size:16px; font-weight:600; letter-spacing:2px; padding:8px 24px; border-radius:30px; margin-bottom:20px; }
+  .qr-hint { font-size:12px; color:var(--gray-hint); text-align:center; line-height:1.6; background:var(--gray-bg); border-radius:10px; padding:12px 16px; width:100%; }
+  .qr-steps { width:100%; margin-top:16px; }
+  .qr-step-row { display:flex; align-items:flex-start; gap:12px; padding:10px 0; }
+  .qr-step-row+.qr-step-row { border-top:1px solid var(--gray-border); }
+  .step-num { width:24px; height:24px; border-radius:50%; background:var(--blue); color:#fff; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .step-txt { font-size:13px; color:var(--gray-text); line-height:1.5; padding-top:2px; }
+  .step-txt strong { color:var(--text); font-weight:600; }
 
-  .info-card { background: var(--gray-card); border-radius: var(--radius); border: 1px solid var(--gray-border); overflow: hidden; margin-bottom: 12px; }
-  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; }
-  .info-row + .info-row { border-top: 1px solid var(--gray-border); }
-  .info-key { font-size: 13px; color: var(--gray-text); }
-  .info-val { font-size: 13px; font-weight: 500; color: var(--text); }
+  /* ── Bottom nav ── */
+  .bottom-nav { position:absolute; bottom:0; left:0; right:0; height:68px; background:var(--gray-card); border-top:1px solid var(--gray-border); display:flex; z-index:10; padding-bottom:8px; }
+  .nav-btn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; padding-top:8px; }
+  .nav-icon { font-size:18px; }
+  .nav-lbl { font-size:9px; font-weight:500; color:var(--gray-hint); transition:color 0.2s; }
+  .nav-btn.active .nav-lbl { color:var(--blue); }
+  .nav-indicator { width:20px; height:3px; border-radius:2px; background:var(--blue); display:none; margin-top:2px; }
+  .nav-btn.active .nav-indicator { display:block; }
 
-  /* ─── Bottom nav ─── */
-  .bottom-nav {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 68px;
-    background: var(--gray-card);
-    border-top: 1px solid var(--gray-border);
-    display: flex; z-index: 10;
-    padding-bottom: 8px;
-  }
-  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; padding-top: 8px; }
-  .nav-icon { font-size: 20px; }
-  .nav-lbl { font-size: 10px; font-weight: 500; color: var(--gray-hint); transition: color 0.2s; }
-  .nav-btn.active .nav-lbl { color: var(--blue); }
-  .nav-indicator { width: 20px; height: 3px; border-radius: 2px; background: var(--blue); display: none; margin-top: 2px; }
-  .nav-btn.active .nav-indicator { display: block; }
-
-  /* ─── OTP step ─── */
-  #otp-step { display: none; }
-  #phone-step { display: block; }
-
-  /* ─── Tab ─── */
-  .tabs { display: flex; border-bottom: 1px solid var(--gray-border); margin-bottom: 16px; }
-  .tab { flex: 1; padding: 10px 0; text-align: center; font-size: 13px; color: var(--gray-text); cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; }
-  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
-
-  /* ─── Animations ─── */
-  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-  .screen.active .animate { animation: fadeUp 0.3s ease both; }
-  .a1{animation-delay:.05s} .a2{animation-delay:.1s} .a3{animation-delay:.15s} .a4{animation-delay:.2s}
-
-  /* ─── Empty state dim ─── */
-  .dim { opacity: 0.4; }
-
-  /* ─── History page tabs ─── */
-  .hist-tab-content { display: none; }
-  .hist-tab-content.active { display: block; }
+  /* ── Misc ── */
+  #otp-step { display:none; }
+  .tabs { display:flex; border-bottom:1px solid var(--gray-border); margin-bottom:16px; }
+  .tab { flex:1; padding:10px 0; text-align:center; font-size:13px; color:var(--gray-text); cursor:pointer; border-bottom:2px solid transparent; font-weight:500; }
+  .tab.active { color:var(--blue); border-bottom-color:var(--blue); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  .screen.active .animate { animation:fadeUp 0.3s ease both; }
+  .a1{animation-delay:.05s} .a2{animation-delay:.1s} .a3{animation-delay:.15s}
+  .hist-tab-content { display:none; }
+  .hist-tab-content.active { display:block; }
 </style>
 </head>
 <body>
 
-<!-- ════════════════ LOGIN SCREEN ════════════════ -->
 <div class="phone">
+
+  <!-- ════ LOGIN ════ -->
   <div class="screen active" id="screen-login">
+    <div class="lang-pill">
+      <button class="active" onclick="setLang('en')" id="lpb-en">EN</button>
+      <button onclick="setLang('th')" id="lpb-th">TH</button>
+    </div>
     <div class="login-logo animate a1">
       <div class="icon-circle">🏫</div>
       <h1>SchoolTrack</h1>
-      <p>ระบบติดตามการเข้าเรียน</p>
+      <p data-i18n="tagline">Attendance Tracking System</p>
     </div>
-
     <div class="login-form animate a2">
-      <!-- Step 1: Phone -->
       <div id="phone-step">
-        <h2>เข้าสู่ระบบ</h2>
-        <p class="sub">สำหรับผู้ปกครองนักเรียน</p>
-        <div class="field-label">เบอร์โทรศัพท์</div>
+        <h2 data-i18n="loginTitle">Sign In</h2>
+        <p class="sub" data-i18n="loginSub">For student parents / guardians</p>
+        <div class="field-label" data-i18n="phoneLabel">Phone Number</div>
         <input class="field-input" type="tel" placeholder="0812345678" id="phone-input" maxlength="10">
-        <button class="btn-primary" onclick="showOtp()">รับรหัส OTP</button>
-        <p style="text-align:center;font-size:12px;color:var(--gray-hint);margin-top:14px;">
-          ระบบจะส่งรหัส 6 หลักไปยังเบอร์ที่กรอก
-        </p>
+        <button class="btn-primary" onclick="showOtp()" data-i18n="getOtp">Get OTP Code</button>
+        <p style="text-align:center;font-size:12px;color:var(--gray-hint);margin-top:14px;" data-i18n="otpNote">A 6-digit code will be sent to your number</p>
       </div>
-
-      <!-- Step 2: OTP -->
       <div id="otp-step">
-        <h2>ยืนยัน OTP</h2>
-        <p class="sub" id="otp-sub">ส่งรหัสไปยัง <strong>XXX</strong> แล้ว</p>
+        <h2 data-i18n="otpTitle">Verify OTP</h2>
+        <p class="sub" id="otp-sub">Code sent to <strong>XXX</strong></p>
         <div class="otp-row">
           <input class="otp-box" maxlength="1" type="tel">
           <input class="otp-box" maxlength="1" type="tel">
@@ -302,35 +255,41 @@
           <input class="otp-box" maxlength="1" type="tel">
           <input class="otp-box" maxlength="1" type="tel">
         </div>
-        <button class="btn-primary" onclick="goToApp()">ยืนยัน &amp; เข้าใช้งาน</button>
-        <button class="btn-outline" onclick="backToPhone()">← เปลี่ยนเบอร์</button>
+        <button class="btn-primary" onclick="goToApp()" data-i18n="verifyBtn">Verify &amp; Sign In</button>
+        <button class="btn-outline" onclick="backToPhone()" data-i18n="changePhone">← Change Number</button>
       </div>
     </div>
   </div>
 
-<!-- ════════════════ APP SCREEN ════════════════ -->
+  <!-- ════ APP ════ -->
   <div class="screen" id="screen-app">
 
-    <!-- ── HOME PAGE ── -->
+    <!-- HOME -->
     <div id="page-home" style="display:flex;flex-direction:column;height:100%;">
       <div class="app-header">
         <div class="header-top animate a1">
           <div>
-            <div class="header-greeting">สวัสดีตอนเช้า 👋</div>
-            <div class="header-name">คุณสมศรี มีสุข</div>
+            <div class="header-greeting" data-i18n="greeting">Good Morning 👋</div>
+            <div class="header-name" data-i18n="parentName">Mrs. Somsri Meesuk</div>
           </div>
-          <div class="header-avatar" onclick="switchTab('profile')">สม</div>
+          <div class="header-right">
+            <div class="header-lang">
+              <button class="active" onclick="setLang('en')" id="hlb-en">EN</button>
+              <button onclick="setLang('th')" id="hlb-th">TH</button>
+            </div>
+            <div class="header-avatar" onclick="switchTab('profile')">SM</div>
+          </div>
         </div>
         <div class="notif-pill animate a2">
           <div class="notif-dot"></div>
           <div class="notif-pill-text">
-            <strong>ด.ช. สมชาย เข้าโรงเรียนแล้ว</strong>
-            <span class="notif-pill-time">วันนี้ เวลา 07:42 น. — สแกน QR</span>
+            <strong data-i18n="notifMsg">Somchai has arrived at school</strong>
+            <span class="notif-pill-time" data-i18n="notifTime">Today at 07:42 — QR Scan</span>
           </div>
         </div>
       </div>
       <div class="scroll-content">
-        <div class="section-lbl animate a2">บุตรหลานของคุณ</div>
+        <div class="section-lbl animate a2" data-i18n="yourChildren">Your Children</div>
         <div class="students-row animate a2">
           <div class="student-card sel" id="sc-0" onclick="selectStu(0)">
             <div class="stu-avatar av-b" style="overflow:hidden;padding:0;">
@@ -343,9 +302,9 @@
                 <rect x="17" y="11" width="14" height="4" rx="2" fill="#5D4037"/>
               </svg>
             </div>
-            <div class="stu-name">ด.ช. สมชาย</div>
-            <div class="stu-class">ป.4/2</div>
-            <span class="badge badge-in">มาเรียน</span>
+            <div class="stu-name" data-i18n="boy1Short">M. Somchai</div>
+            <div class="stu-class">G4/2</div>
+            <span class="badge badge-in" data-i18n="present">Present</span>
           </div>
           <div class="student-card" id="sc-1" onclick="selectStu(1)">
             <div class="stu-avatar av-p" style="overflow:hidden;padding:0;">
@@ -360,141 +319,144 @@
                 <ellipse cx="30" cy="20" rx="1" ry="1.5" fill="#F06292" opacity="0.5"/>
               </svg>
             </div>
-            <div class="stu-name">ด.ญ. สมหญิง</div>
-            <div class="stu-class">ป.2/1</div>
-            <span class="badge badge-wait">รอข้อมูล</span>
+            <div class="stu-name" data-i18n="girl1Short">F. Somying</div>
+            <div class="stu-class">G2/1</div>
+            <span class="badge badge-wait" data-i18n="pending">Pending</span>
           </div>
         </div>
 
-        <!-- Summary for stu 0 -->
         <div id="summary-0" class="animate a3">
-          <div class="section-lbl">สรุปเดือนเมษายน — ด.ช. สมชาย</div>
+          <div class="section-lbl" data-i18n="summaryBoy">April Summary — M. Somchai</div>
           <div class="summary-row">
-            <div class="sum-card"><div class="sum-num num-g">18</div><div class="sum-lbl">มาเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-r">1</div><div class="sum-lbl">ขาดเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-a">2</div><div class="sum-lbl">ลาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-g">18</div><div class="sum-lbl" data-i18n="present">Present</div></div>
+            <div class="sum-card"><div class="sum-num num-r">1</div><div class="sum-lbl" data-i18n="absent">Absent</div></div>
+            <div class="sum-card"><div class="sum-num num-a">2</div><div class="sum-lbl" data-i18n="leave">Leave</div></div>
           </div>
-          <div class="section-lbl">บันทึกวันนี้</div>
+          <div class="section-lbl" data-i18n="todayLog">Today's Log</div>
           <div class="tl-card">
             <div class="tl-card-date">
-              <span>พฤหัสบดีที่ 24 เมษายน 2568</span>
-              <span class="badge badge-in">มาเรียน</span>
+              <span data-i18n="todayDate">Thursday, 24 April 2025</span>
+              <span class="badge badge-in" data-i18n="present">Present</span>
             </div>
             <div class="tl-row">
               <div class="tl-dot d-in"></div>
               <div class="tl-time">07:42</div>
-              <div class="tl-desc">เข้าโรงเรียน</div>
-              <div class="tl-tag tag-in">เข้า</div>
+              <div class="tl-desc" data-i18n="checkIn">Check-In</div>
+              <div class="tl-tag tag-in" data-i18n="in">IN</div>
             </div>
             <div class="tl-row">
               <div class="tl-dot d-wait"></div>
-              <div class="tl-time" style="color:var(--gray-hint);">--:--</div>
-              <div class="tl-desc" style="color:var(--gray-hint);">รอข้อมูลออก</div>
-              <div class="tl-tag tag-wait">รอ</div>
+              <div class="tl-time" style="color:var(--gray-hint)">--:--</div>
+              <div class="tl-desc" style="color:var(--gray-hint)" data-i18n="waitingOut">Waiting for check-out</div>
+              <div class="tl-tag tag-wait" data-i18n="wait">WAIT</div>
             </div>
           </div>
         </div>
 
-        <!-- Summary for stu 1 -->
         <div id="summary-1" class="animate a3" style="display:none;">
-          <div class="section-lbl">สรุปเดือนเมษายน — ด.ญ. สมหญิง</div>
+          <div class="section-lbl" data-i18n="summaryGirl">April Summary — F. Somying</div>
           <div class="summary-row">
-            <div class="sum-card"><div class="sum-num num-g">17</div><div class="sum-lbl">มาเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-r">2</div><div class="sum-lbl">ขาดเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-a">1</div><div class="sum-lbl">ลาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-g">17</div><div class="sum-lbl" data-i18n="present">Present</div></div>
+            <div class="sum-card"><div class="sum-num num-r">2</div><div class="sum-lbl" data-i18n="absent">Absent</div></div>
+            <div class="sum-card"><div class="sum-num num-a">1</div><div class="sum-lbl" data-i18n="leave">Leave</div></div>
           </div>
-          <div class="section-lbl">บันทึกวันนี้</div>
+          <div class="section-lbl" data-i18n="todayLog">Today's Log</div>
           <div class="tl-card">
-            <div class="tl-card-date"><span>พฤหัสบดีที่ 24 เมษายน 2568</span></div>
+            <div class="tl-card-date"><span data-i18n="todayDate">Thursday, 24 April 2025</span></div>
             <div class="tl-row">
               <div class="tl-dot d-wait"></div>
-              <div class="tl-time" style="color:var(--gray-hint);">--:--</div>
-              <div class="tl-desc" style="color:var(--gray-hint);">ยังไม่มีข้อมูล</div>
-              <div class="tl-tag tag-wait">รอ</div>
+              <div class="tl-time" style="color:var(--gray-hint)">--:--</div>
+              <div class="tl-desc" style="color:var(--gray-hint)" data-i18n="noData">No data yet</div>
+              <div class="tl-tag tag-wait" data-i18n="wait">WAIT</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="bottom-nav" id="bnav-home">
-        <div class="nav-btn active" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">หน้าหลัก</div><div class="nav-indicator"></div></div>
-        <div class="nav-btn" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl">ประวัติ</div><div class="nav-indicator"></div></div>
-        <div class="nav-btn" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl">โปรไฟล์</div><div class="nav-indicator"></div></div>
+      <div class="bottom-nav">
+        <div class="nav-btn active" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl" data-i18n="navHome">Home</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl" data-i18n="navHistory">History</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('qr')"><div class="nav-icon">📷</div><div class="nav-lbl">QR Code</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl" data-i18n="navProfile">Profile</div><div class="nav-indicator"></div></div>
       </div>
     </div>
 
-    <!-- ── HISTORY PAGE ── -->
+    <!-- HISTORY -->
     <div id="page-history" style="display:none;flex-direction:column;height:100%;">
       <div class="app-header">
         <div class="header-top">
           <div>
-            <div class="header-greeting">ประวัติการเข้าเรียน</div>
-            <div class="header-name">ด.ช. สมชาย มีสุข</div>
+            <div class="header-greeting" data-i18n="histTitle">Attendance History</div>
+            <div class="header-name" data-i18n="boy1Full">M. Somchai Meesuk</div>
           </div>
-          <div class="header-avatar" onclick="switchTab('profile')">สม</div>
+          <div class="header-right">
+            <div class="header-lang">
+              <button class="active" onclick="setLang('en')" id="hlb2-en">EN</button>
+              <button onclick="setLang('th')" id="hlb2-th">TH</button>
+            </div>
+            <div class="header-avatar" onclick="switchTab('profile')">SM</div>
+          </div>
         </div>
       </div>
       <div class="scroll-content" style="padding-top:12px;">
         <div class="tabs">
-          <div class="tab active" onclick="switchHistTab(0,this)">สัปดาห์นี้</div>
-          <div class="tab" onclick="switchHistTab(1,this)">เดือนนี้</div>
-          <div class="tab" onclick="switchHistTab(2,this)">เดือนก่อน</div>
+          <div class="tab active" onclick="switchHistTab(0,this)" data-i18n="thisWeek">This Week</div>
+          <div class="tab" onclick="switchHistTab(1,this)" data-i18n="thisMonth">This Month</div>
+          <div class="tab" onclick="switchHistTab(2,this)" data-i18n="lastMonth">Last Month</div>
         </div>
-
         <div class="hist-tab-content active" id="hist-0">
           <div class="tl-card">
-            <div class="tl-card-date"><span>พฤหัสบดีที่ 24 เม.ย.</span><span class="badge badge-in">มาเรียน</span></div>
-            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:42</div><div class="tl-desc">เข้าโรงเรียน</div><div class="tl-tag tag-in">เข้า</div></div>
-            <div class="tl-row"><div class="tl-dot d-wait"></div><div class="tl-time" style="color:var(--gray-hint)">--:--</div><div class="tl-desc" style="color:var(--gray-hint)">รอข้อมูล</div><div class="tl-tag tag-wait">รอ</div></div>
+            <div class="tl-card-date"><span data-i18n="d_thu24">Thu, 24 Apr</span><span class="badge badge-in" data-i18n="present">Present</span></div>
+            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:42</div><div class="tl-desc" data-i18n="checkIn">Check-In</div><div class="tl-tag tag-in" data-i18n="in">IN</div></div>
+            <div class="tl-row"><div class="tl-dot d-wait"></div><div class="tl-time" style="color:var(--gray-hint)">--:--</div><div class="tl-desc" style="color:var(--gray-hint)" data-i18n="pending">Pending</div><div class="tl-tag tag-wait" data-i18n="wait">WAIT</div></div>
           </div>
           <div class="tl-card">
-            <div class="tl-card-date"><span>พุธที่ 23 เม.ย.</span><span class="badge badge-in">มาเรียน</span></div>
-            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:38</div><div class="tl-desc">เข้าโรงเรียน</div><div class="tl-tag tag-in">เข้า</div></div>
-            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">15:55</div><div class="tl-desc">ออกจากโรงเรียน</div><div class="tl-tag tag-out">ออก</div></div>
+            <div class="tl-card-date"><span data-i18n="d_wed23">Wed, 23 Apr</span><span class="badge badge-in" data-i18n="present">Present</span></div>
+            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:38</div><div class="tl-desc" data-i18n="checkIn">Check-In</div><div class="tl-tag tag-in" data-i18n="in">IN</div></div>
+            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">15:55</div><div class="tl-desc" data-i18n="checkOut">Check-Out</div><div class="tl-tag tag-out" data-i18n="out">OUT</div></div>
           </div>
           <div class="tl-card">
-            <div class="tl-card-date"><span>อังคารที่ 22 เม.ย.</span><span class="badge badge-in">มาเรียน</span></div>
-            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:51</div><div class="tl-desc">เข้าโรงเรียน</div><div class="tl-tag tag-in">เข้า</div></div>
-            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">16:02</div><div class="tl-desc">ออกจากโรงเรียน</div><div class="tl-tag tag-out">ออก</div></div>
+            <div class="tl-card-date"><span data-i18n="d_tue22">Tue, 22 Apr</span><span class="badge badge-in" data-i18n="present">Present</span></div>
+            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:51</div><div class="tl-desc" data-i18n="checkIn">Check-In</div><div class="tl-tag tag-in" data-i18n="in">IN</div></div>
+            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">16:02</div><div class="tl-desc" data-i18n="checkOut">Check-Out</div><div class="tl-tag tag-out" data-i18n="out">OUT</div></div>
           </div>
           <div class="tl-card">
-            <div class="tl-card-date"><span>จันทร์ที่ 21 เม.ย.</span><span class="badge" style="background:#EDE7F6;color:#4527A0;">วันหยุด</span></div>
-            <div class="tl-row"><div class="tl-dot" style="background:#9E9E9E"></div><div class="tl-time" style="color:var(--gray-hint)">—</div><div class="tl-desc" style="color:var(--gray-hint)">วันหยุดราชการ</div></div>
+            <div class="tl-card-date"><span data-i18n="d_mon21">Mon, 21 Apr</span><span class="badge" style="background:#EDE7F6;color:#4527A0;" data-i18n="holiday">Holiday</span></div>
+            <div class="tl-row"><div class="tl-dot" style="background:#9E9E9E"></div><div class="tl-time" style="color:var(--gray-hint)">—</div><div class="tl-desc" style="color:var(--gray-hint)" data-i18n="publicHoliday">Public Holiday</div></div>
           </div>
         </div>
-
         <div class="hist-tab-content" id="hist-1">
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
-            <div class="sum-card"><div class="sum-num num-g">18</div><div class="sum-lbl">มาเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-r">1</div><div class="sum-lbl">ขาดเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-a">2</div><div class="sum-lbl">ลาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-g">18</div><div class="sum-lbl" data-i18n="present">Present</div></div>
+            <div class="sum-card"><div class="sum-num num-r">1</div><div class="sum-lbl" data-i18n="absent">Absent</div></div>
+            <div class="sum-card"><div class="sum-num num-a">2</div><div class="sum-lbl" data-i18n="leave">Leave</div></div>
           </div>
           <div class="tl-card">
-            <div class="tl-card-date"><span>17 เม.ย. — ขาดเรียน</span><span class="badge" style="background:var(--red-light);color:var(--red);">ขาด</span></div>
-            <div class="tl-row"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-time" style="color:var(--red)">—</div><div class="tl-desc">ไม่มีข้อมูลการเข้าเรียน</div></div>
+            <div class="tl-card-date"><span data-i18n="d_17apr">17 Apr — Absent</span><span class="badge" style="background:var(--red-light);color:var(--red);" data-i18n="absent">Absent</span></div>
+            <div class="tl-row"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-time" style="color:var(--red)">—</div><div class="tl-desc" data-i18n="noRecord">No attendance record</div></div>
           </div>
           <div class="tl-card">
-            <div class="tl-card-date"><span>14 เม.ย. — ลาเรียน</span><span class="badge badge-wait">ลา</span></div>
-            <div class="tl-row"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-time" style="color:var(--amber)">—</div><div class="tl-desc">ใบลาป่วย</div></div>
+            <div class="tl-card-date"><span data-i18n="d_14apr">14 Apr — Leave</span><span class="badge badge-wait" data-i18n="leave">Leave</span></div>
+            <div class="tl-row"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-time" style="color:var(--amber)">—</div><div class="tl-desc" data-i18n="sickLeave">Sick Leave</div></div>
           </div>
         </div>
-
         <div class="hist-tab-content" id="hist-2">
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
-            <div class="sum-card"><div class="sum-num num-g">20</div><div class="sum-lbl">มาเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-r">0</div><div class="sum-lbl">ขาดเรียน</div></div>
-            <div class="sum-card"><div class="sum-num num-a">1</div><div class="sum-lbl">ลาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-g">20</div><div class="sum-lbl" data-i18n="present">Present</div></div>
+            <div class="sum-card"><div class="sum-num num-r">0</div><div class="sum-lbl" data-i18n="absent">Absent</div></div>
+            <div class="sum-card"><div class="sum-num num-a">1</div><div class="sum-lbl" data-i18n="leave">Leave</div></div>
           </div>
-          <p style="text-align:center;color:var(--gray-hint);font-size:13px;padding:20px 0;">เดือนมีนาคม 2568<br>มาเรียนสม่ำเสมอ 🎉</p>
+          <p style="text-align:center;color:var(--gray-hint);font-size:13px;padding:20px 0;" data-i18n="marchNote">March 2025 — Perfect attendance! 🎉</p>
         </div>
       </div>
       <div class="bottom-nav">
-        <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">หน้าหลัก</div><div class="nav-indicator"></div></div>
-        <div class="nav-btn active" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl">ประวัติ</div><div class="nav-indicator"></div></div>
-        <div class="nav-btn" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl">โปรไฟล์</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl" data-i18n="navHome">Home</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn active" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl" data-i18n="navHistory">History</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('qr')"><div class="nav-icon">📷</div><div class="nav-lbl">QR Code</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl" data-i18n="navProfile">Profile</div><div class="nav-indicator"></div></div>
       </div>
     </div>
 
-    <!-- ── PROFILE PAGE ── -->
+    <!-- PROFILE -->
     <div id="page-profile" style="display:none;flex-direction:column;height:100%;">
       <div class="profile-hero">
         <div id="pav" class="profile-av" style="overflow:hidden;padding:0;background:transparent;border:2px solid rgba(255,255,255,0.4);">
@@ -506,41 +468,81 @@
             <rect x="12" y="52" width="48" height="28" rx="8" fill="#1565C0"/>
           </svg>
         </div>
-        <h2 id="pname">ด.ช. สมชาย มีสุข</h2>
-        <p id="pclass">ชั้น ป.4/2 · โรงเรียนสาธิต</p>
+        <h2 id="pname" data-i18n="boy1Full">M. Somchai Meesuk</h2>
+        <p id="pclass" data-i18n="boy1ClassSchool">Grade 4/2 · SchoolTrack International</p>
         <div class="profile-switcher">
-          <button class="ps-btn active" id="psb-0" onclick="switchProfile(0)">ด.ช. สมชาย</button>
-          <button class="ps-btn" id="psb-1" onclick="switchProfile(1)">ด.ญ. สมหญิง</button>
+          <button class="ps-btn active" id="psb-0" onclick="switchProfile(0)" data-i18n="boy1Short">M. Somchai</button>
+          <button class="ps-btn" id="psb-1" onclick="switchProfile(1)" data-i18n="girl1Short">F. Somying</button>
         </div>
       </div>
       <div class="scroll-content" style="padding-top:16px;">
-        <div class="section-lbl" id="profile-detail-lbl">ข้อมูลนักเรียน</div>
+        <div class="section-lbl" data-i18n="studentInfo">Student Information</div>
         <div class="info-card" id="info-stu-0">
-          <div class="info-row"><span class="info-key">รหัสนักเรียน</span><span class="info-val">66001234</span></div>
-          <div class="info-row"><span class="info-key">ชั้นเรียน</span><span class="info-val">ป.4/2</span></div>
-          <div class="info-row"><span class="info-key">ครูประจำชั้น</span><span class="info-val">ครูวิภา ใจดี</span></div>
-          <div class="info-row"><span class="info-key">เลขที่</span><span class="info-val">15</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="studentId">Student ID</span><span class="info-val">66001234</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="classRoom">Class</span><span class="info-val">Grade 4/2</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="homeroom">Homeroom Teacher</span><span class="info-val">Ms. Wipa Jaidee</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="classNo">Class Number</span><span class="info-val">15</span></div>
         </div>
         <div class="info-card" id="info-stu-1" style="display:none;">
-          <div class="info-row"><span class="info-key">รหัสนักเรียน</span><span class="info-val">66001235</span></div>
-          <div class="info-row"><span class="info-key">ชั้นเรียน</span><span class="info-val">ป.2/1</span></div>
-          <div class="info-row"><span class="info-key">ครูประจำชั้น</span><span class="info-val">ครูนภา สดใส</span></div>
-          <div class="info-row"><span class="info-key">เลขที่</span><span class="info-val">8</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="studentId">Student ID</span><span class="info-val">66001235</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="classRoom">Class</span><span class="info-val">Grade 2/1</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="homeroom">Homeroom Teacher</span><span class="info-val">Ms. Napa Sodsai</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="classNo">Class Number</span><span class="info-val">8</span></div>
         </div>
-        <div class="section-lbl" style="margin-top:8px;">ข้อมูลผู้ปกครอง</div>
+        <div class="section-lbl" style="margin-top:8px;" data-i18n="guardianInfo">Guardian Information</div>
         <div class="info-card">
-          <div class="info-row"><span class="info-key">ชื่อผู้ปกครอง</span><span class="info-val">คุณสมศรี มีสุข</span></div>
-          <div class="info-row"><span class="info-key">เบอร์โทรศัพท์</span><span class="info-val">08X-XXX-XXXX</span></div>
-          <div class="info-row"><span class="info-key">ความสัมพันธ์</span><span class="info-val">มารดา</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="guardianName">Guardian Name</span><span class="info-val" data-i18n="parentName">Mrs. Somsri Meesuk</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="phoneLabel">Phone Number</span><span class="info-val">08X-XXX-XXXX</span></div>
+          <div class="info-row"><span class="info-key" data-i18n="relation">Relationship</span><span class="info-val" data-i18n="mother">Mother</span></div>
         </div>
-        <button class="btn-outline" style="margin-top:8px;border-color:var(--gray-border);color:var(--gray-text);" onclick="logout()">
-          ออกจากระบบ
-        </button>
+        <button class="btn-outline" style="margin-top:8px;border-color:var(--gray-border);color:var(--gray-text);" onclick="logout()" data-i18n="signOut">Sign Out</button>
       </div>
       <div class="bottom-nav">
-        <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">หน้าหลัก</div><div class="nav-indicator"></div></div>
-        <div class="nav-btn" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl">ประวัติ</div><div class="nav-indicator"></div></div>
-        <div class="nav-btn active" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl">โปรไฟล์</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl" data-i18n="navHome">Home</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl" data-i18n="navHistory">History</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('qr')"><div class="nav-icon">📷</div><div class="nav-lbl">QR Code</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn active" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl" data-i18n="navProfile">Profile</div><div class="nav-indicator"></div></div>
+      </div>
+    </div>
+
+    <!-- QR PAGE -->
+    <div id="page-qr" style="display:none;flex-direction:column;height:100%;">
+      <div class="qr-hero">
+        <h2 data-i18n="qrTitle">Student QR Code</h2>
+        <p data-i18n="qrSub">Show this QR to staff at the school gate</p>
+        <div class="qr-switcher">
+          <button class="qr-btn active" id="qrb-0" onclick="switchQR(0)" data-i18n="boy1Short">M. Somchai</button>
+          <button class="qr-btn" id="qrb-1" onclick="switchQR(1)" data-i18n="girl1Short">F. Somying</button>
+        </div>
+      </div>
+      <div class="qr-body">
+        <div class="qr-card">
+          <div id="qr-student-name" class="qr-name">M. Somchai Meesuk</div>
+          <div id="qr-student-meta" class="qr-meta">Grade 4/2 &nbsp;|&nbsp; ID 66001234</div>
+          <div class="qr-wrap"><canvas id="qr-canvas" width="180" height="180"></canvas></div>
+          <div id="qr-id-pill" class="qr-id-pill">66001234</div>
+          <div class="qr-hint" data-i18n="qrHint">Present this screen to staff<br>or the QR scanner at the school gate</div>
+          <div class="qr-steps">
+            <div class="qr-step-row">
+              <div class="step-num">1</div>
+              <div class="step-txt" data-i18n="qrStep1"><strong>Open this page</strong> before arriving at school</div>
+            </div>
+            <div class="qr-step-row">
+              <div class="step-num">2</div>
+              <div class="step-txt" data-i18n="qrStep2"><strong>Show the QR Code</strong> to staff for scanning</div>
+            </div>
+            <div class="qr-step-row">
+              <div class="step-num">3</div>
+              <div class="step-txt" data-i18n="qrStep3"><strong>Receive a notification</strong> when the system records it</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl" data-i18n="navHome">Home</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl" data-i18n="navHistory">History</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn active" onclick="switchTab('qr')"><div class="nav-icon">📷</div><div class="nav-lbl">QR Code</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl" data-i18n="navProfile">Profile</div><div class="nav-indicator"></div></div>
       </div>
     </div>
 
@@ -548,79 +550,251 @@
 </div><!-- /phone -->
 
 <script>
-  // ── Login flow ──
-  function showOtp() {
-    var ph = document.getElementById('phone-input').value || '08X-XXX-XXXX';
-    document.getElementById('otp-sub').innerHTML = 'ส่งรหัสไปยัง <strong>' + ph + '</strong> แล้ว';
-    document.getElementById('phone-step').style.display = 'none';
-    document.getElementById('otp-step').style.display = 'block';
-    // OTP auto-advance
-    var boxes = document.querySelectorAll('.otp-box');
-    boxes.forEach(function(box, i) {
-      box.addEventListener('input', function() {
-        if (this.value.length === 1 && i < boxes.length - 1) boxes[i+1].focus();
-      });
-    });
+// ══════════════════════════════════════════
+//  i18n — Translation dictionary
+// ══════════════════════════════════════════
+var LANG = {
+  en: {
+    tagline:'Attendance Tracking System', loginTitle:'Sign In', loginSub:'For student parents / guardians',
+    phoneLabel:'Phone Number', getOtp:'Get OTP Code', otpNote:'A 6-digit code will be sent to your number',
+    otpTitle:'Verify OTP', otpSentTo:'Code sent to', verifyBtn:'Verify & Sign In', changePhone:'← Change Number',
+    greeting:'Good Morning 👋', parentName:'Mrs. Somsri Meesuk',
+    notifMsg:'Somchai has arrived at school', notifTime:'Today at 07:42 — QR Scan',
+    yourChildren:'Your Children',
+    boy1Short:'M. Somchai', girl1Short:'F. Somying',
+    boy1Full:'M. Somchai Meesuk', girl1Full:'F. Somying Meesuk',
+    boy1ClassSchool:'Grade 4/2 · SchoolTrack International',
+    girl1ClassSchool:'Grade 2/1 · SchoolTrack International',
+    present:'Present', absent:'Absent', leave:'Leave', pending:'Pending',
+    summaryBoy:'April Summary — M. Somchai', summaryGirl:'April Summary — F. Somying',
+    todayLog:"Today's Log", todayDate:'Thursday, 24 April 2025',
+    checkIn:'Check-In', checkOut:'Check-Out', waitingOut:'Waiting for check-out', noData:'No data yet',
+    in:'IN', out:'OUT', wait:'WAIT',
+    histTitle:'Attendance History',
+    thisWeek:'This Week', thisMonth:'This Month', lastMonth:'Last Month',
+    d_thu24:'Thu, 24 Apr', d_wed23:'Wed, 23 Apr', d_tue22:'Tue, 22 Apr', d_mon21:'Mon, 21 Apr',
+    holiday:'Holiday', publicHoliday:'Public Holiday',
+    d_17apr:'17 Apr — Absent', d_14apr:'14 Apr — Leave',
+    noRecord:'No attendance record', sickLeave:'Sick Leave',
+    marchNote:'March 2025 — Perfect attendance! 🎉',
+    studentInfo:'Student Information', guardianInfo:'Guardian Information',
+    studentId:'Student ID', classRoom:'Class', homeroom:'Homeroom Teacher', classNo:'Class Number',
+    guardianName:'Guardian Name', relation:'Relationship', mother:'Mother',
+    signOut:'Sign Out',
+    qrTitle:'Student QR Code', qrSub:'Show this QR to staff at the school gate',
+    qrHint:'Present this screen to staff<br>or the QR scanner at the school gate',
+    qrStep1:'<strong>Open this page</strong> before arriving at school',
+    qrStep2:'<strong>Show the QR Code</strong> to staff for scanning',
+    qrStep3:'<strong>Receive a notification</strong> when the system records it',
+    navHome:'Home', navHistory:'History', navProfile:'Profile',
+    boy1QRMeta:'Grade 4/2  |  ID 66001234', girl1QRMeta:'Grade 2/1  |  ID 66001235',
+  },
+  th: {
+    tagline:'ระบบติดตามการเข้าเรียน', loginTitle:'เข้าสู่ระบบ', loginSub:'สำหรับผู้ปกครองนักเรียน',
+    phoneLabel:'เบอร์โทรศัพท์', getOtp:'รับรหัส OTP', otpNote:'ระบบจะส่งรหัส 6 หลักไปยังเบอร์ที่กรอก',
+    otpTitle:'ยืนยัน OTP', otpSentTo:'ส่งรหัสไปยัง', verifyBtn:'ยืนยัน & เข้าใช้งาน', changePhone:'← เปลี่ยนเบอร์',
+    greeting:'สวัสดีตอนเช้า 👋', parentName:'คุณสมศรี มีสุข',
+    notifMsg:'ด.ช. สมชาย เข้าโรงเรียนแล้ว', notifTime:'วันนี้ เวลา 07:42 น. — สแกน QR',
+    yourChildren:'บุตรหลานของคุณ',
+    boy1Short:'ด.ช. สมชาย', girl1Short:'ด.ญ. สมหญิง',
+    boy1Full:'ด.ช. สมชาย มีสุข', girl1Full:'ด.ญ. สมหญิง มีสุข',
+    boy1ClassSchool:'ชั้น ป.4/2 · โรงเรียนสาธิต', girl1ClassSchool:'ชั้น ป.2/1 · โรงเรียนสาธิต',
+    present:'มาเรียน', absent:'ขาดเรียน', leave:'ลาเรียน', pending:'รอข้อมูล',
+    summaryBoy:'สรุปเดือนเมษายน — ด.ช. สมชาย', summaryGirl:'สรุปเดือนเมษายน — ด.ญ. สมหญิง',
+    todayLog:'บันทึกวันนี้', todayDate:'พฤหัสบดีที่ 24 เมษายน 2568',
+    checkIn:'เข้าโรงเรียน', checkOut:'ออกจากโรงเรียน', waitingOut:'รอข้อมูลออก', noData:'ยังไม่มีข้อมูล',
+    in:'เข้า', out:'ออก', wait:'รอ',
+    histTitle:'ประวัติการเข้าเรียน',
+    thisWeek:'สัปดาห์นี้', thisMonth:'เดือนนี้', lastMonth:'เดือนก่อน',
+    d_thu24:'พฤหัสบดีที่ 24 เม.ย.', d_wed23:'พุธที่ 23 เม.ย.', d_tue22:'อังคารที่ 22 เม.ย.', d_mon21:'จันทร์ที่ 21 เม.ย.',
+    holiday:'วันหยุด', publicHoliday:'วันหยุดราชการ',
+    d_17apr:'17 เม.ย. — ขาดเรียน', d_14apr:'14 เม.ย. — ลาเรียน',
+    noRecord:'ไม่มีข้อมูลการเข้าเรียน', sickLeave:'ใบลาป่วย',
+    marchNote:'เดือนมีนาคม 2568 — มาเรียนสม่ำเสมอ 🎉',
+    studentInfo:'ข้อมูลนักเรียน', guardianInfo:'ข้อมูลผู้ปกครอง',
+    studentId:'รหัสนักเรียน', classRoom:'ชั้นเรียน', homeroom:'ครูประจำชั้น', classNo:'เลขที่',
+    guardianName:'ชื่อผู้ปกครอง', relation:'ความสัมพันธ์', mother:'มารดา',
+    signOut:'ออกจากระบบ',
+    qrTitle:'QR Code นักเรียน', qrSub:'แสดง QR ให้เจ้าหน้าที่สแกนที่ประตูโรงเรียน',
+    qrHint:'นำหน้าจอนี้แสดงต่อเจ้าหน้าที่<br>หรือเครื่องสแกน QR ที่ประตูโรงเรียน',
+    qrStep1:'<strong>เปิดหน้านี้</strong> ก่อนถึงโรงเรียน',
+    qrStep2:'<strong>แสดง QR Code</strong> ให้เจ้าหน้าที่สแกน',
+    qrStep3:'<strong>รับการแจ้งเตือน</strong> เมื่อระบบบันทึกแล้ว',
+    navHome:'หน้าหลัก', navHistory:'ประวัติ', navProfile:'โปรไฟล์',
+    boy1QRMeta:'ชั้น ป.4/2  |  รหัส 66001234', girl1QRMeta:'ชั้น ป.2/1  |  รหัส 66001235',
   }
-  function backToPhone() {
-    document.getElementById('phone-step').style.display = 'block';
-    document.getElementById('otp-step').style.display = 'none';
-  }
-  function goToApp() {
-    document.getElementById('screen-login').classList.remove('active');
-    document.getElementById('screen-app').classList.add('active');
-    switchTab('home');
-  }
-  function logout() {
-    document.getElementById('screen-app').classList.remove('active');
-    document.getElementById('screen-login').classList.add('active');
-    document.getElementById('phone-step').style.display = 'block';
-    document.getElementById('otp-step').style.display = 'none';
-    document.getElementById('phone-input').value = '';
-  }
+};
 
-  // ── Tab switching ──
-  function switchTab(tab) {
-    ['home','history','profile'].forEach(function(t) {
-      var pg = document.getElementById('page-' + t);
-      pg.style.display = t === tab ? 'flex' : 'none';
-    });
-  }
+var currentLang = 'en';
 
-  // ── Student select on home ──
-  function selectStu(idx) {
-    [0,1].forEach(function(i) {
-      document.getElementById('sc-' + i).classList.toggle('sel', i === idx);
-      document.getElementById('summary-' + i).style.display = i === idx ? 'block' : 'none';
-    });
-  }
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.body.className = lang === 'th' ? 'lang-th' : '';
+  var t = LANG[lang];
 
-  // ── History tabs ──
-  function switchHistTab(idx, el) {
-    document.querySelectorAll('.hist-tab-content').forEach(function(c,i) {
-      c.classList.toggle('active', i === idx);
-    });
-    document.querySelectorAll('.tabs .tab').forEach(function(t) { t.classList.remove('active'); });
-    el.classList.add('active');
-  }
+  // Update all data-i18n elements (innerHTML for QR steps, textContent for rest)
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      // Use innerHTML for keys that may contain <strong> tags
+      if (key.indexOf('qrStep') === 0 || key === 'qrHint') {
+        el.innerHTML = t[key];
+      } else {
+        el.textContent = t[key];
+      }
+    }
+  });
 
-  // ── Profile switcher ──
-  var boySVG = '<rect width="72" height="72" rx="36" fill="#E3F2FD"/><circle cx="36" cy="26" r="13" fill="#FFCC80"/><ellipse cx="36" cy="20" rx="10" ry="7" fill="#5D4037"/><rect x="26" y="17" width="20" height="6" rx="3" fill="#5D4037"/><rect x="12" y="52" width="48" height="28" rx="8" fill="#1565C0"/>';
-  var girlSVG = '<rect width="72" height="72" rx="36" fill="#FCE4EC"/><circle cx="36" cy="26" r="13" fill="#FFCC80"/><path d="M26 18 Q36 9 46 18 Q46 12 36 10 Q26 12 26 18Z" fill="#C62828"/><path d="M23 21 Q26 15 36 13 Q46 15 49 21" stroke="#C62828" stroke-width="3" fill="none"/><ellipse cx="27" cy="30" rx="1.5" ry="2" fill="#F06292" opacity="0.5"/><ellipse cx="45" cy="30" rx="1.5" ry="2" fill="#F06292" opacity="0.5"/><rect x="12" y="52" width="48" height="28" rx="8" fill="#C62828"/>';
-  var profiles = [
-    { svg: boySVG,  name:'ด.ช. สมชาย มีสุข', cls:'ชั้น ป.4/2 · โรงเรียนสาธิต' },
-    { svg: girlSVG, name:'ด.ญ. สมหญิง มีสุข', cls:'ชั้น ป.2/1 · โรงเรียนสาธิต' }
-  ];
-  function switchProfile(idx) {
-    var p = profiles[idx];
-    document.getElementById('pav-svg').innerHTML = p.svg;
-    document.getElementById('pname').textContent = p.name;
-    document.getElementById('pclass').textContent = p.cls;
-    [0,1].forEach(function(i) {
-      document.getElementById('psb-' + i).classList.toggle('active', i === idx);
-      document.getElementById('info-stu-' + i).style.display = i === idx ? 'block' : 'none';
-    });
+  // Update lang toggle buttons
+  ['lp','hl','hl2'].forEach(function(prefix) {
+    var en = document.getElementById(prefix + 'b-en');
+    var th = document.getElementById(prefix + 'b-th');
+    if (en) en.classList.toggle('active', lang === 'en');
+    if (th) th.classList.toggle('active', lang === 'th');
+  });
+
+  // Update QR data text (dynamic content not in DOM at load)
+  var qrIdx = currentQR;
+  var qrNames = [t.boy1Full, t.girl1Full];
+  var qrMetas = [t.boy1QRMeta, t.girl1QRMeta];
+  var nameEl = document.getElementById('qr-student-name');
+  var metaEl = document.getElementById('qr-student-meta');
+  if (nameEl) nameEl.textContent = qrNames[qrIdx];
+  if (metaEl) metaEl.textContent = qrMetas[qrIdx];
+
+  // Update profile dynamic content
+  var profIdx = currentProfile;
+  var profNames = [t.boy1Full, t.girl1Full];
+  var profClasses = [t.boy1ClassSchool, t.girl1ClassSchool];
+  var pname = document.getElementById('pname');
+  var pclass = document.getElementById('pclass');
+  if (pname) pname.textContent = profNames[profIdx];
+  if (pclass) pclass.textContent = profClasses[profIdx];
+
+  // Update OTP subtitle if visible
+  var otpSub = document.getElementById('otp-sub');
+  if (otpSub) {
+    var ph = document.getElementById('phone-input').value || 'XXX';
+    otpSub.innerHTML = t.otpSentTo + ' <strong>' + ph + '</strong>';
   }
+}
+
+// ══════════════════════════════════════════
+//  Login flow
+// ══════════════════════════════════════════
+function showOtp() {
+  var ph = document.getElementById('phone-input').value || 'XXX';
+  var t = LANG[currentLang];
+  document.getElementById('otp-sub').innerHTML = t.otpSentTo + ' <strong>' + ph + '</strong>';
+  document.getElementById('phone-step').style.display = 'none';
+  document.getElementById('otp-step').style.display = 'block';
+  var boxes = document.querySelectorAll('.otp-box');
+  boxes.forEach(function(box, i) {
+    box.addEventListener('input', function() {
+      if (this.value.length === 1 && i < boxes.length - 1) boxes[i+1].focus();
+    });
+  });
+}
+function backToPhone() {
+  document.getElementById('phone-step').style.display = 'block';
+  document.getElementById('otp-step').style.display = 'none';
+}
+function goToApp() {
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  switchTab('home');
+}
+function logout() {
+  document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+  document.getElementById('phone-step').style.display = 'block';
+  document.getElementById('otp-step').style.display = 'none';
+  document.getElementById('phone-input').value = '';
+}
+
+// ── Tab switching ──
+function switchTab(tab) {
+  ['home','history','qr','profile'].forEach(function(t) {
+    var pg = document.getElementById('page-' + t);
+    pg.style.display = t === tab ? 'flex' : 'none';
+  });
+  if (tab === 'qr') setTimeout(drawQR, 80);
+}
+
+// ── Student select ──
+function selectStu(idx) {
+  [0,1].forEach(function(i) {
+    document.getElementById('sc-' + i).classList.toggle('sel', i === idx);
+    document.getElementById('summary-' + i).style.display = i === idx ? 'block' : 'none';
+  });
+}
+
+// ── History tabs ──
+function switchHistTab(idx, el) {
+  document.querySelectorAll('.hist-tab-content').forEach(function(c,i) { c.classList.toggle('active', i === idx); });
+  document.querySelectorAll('.tabs .tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// ── Profile switcher ──
+var boySVG = '<rect width="72" height="72" rx="36" fill="#E3F2FD"/><circle cx="36" cy="26" r="13" fill="#FFCC80"/><ellipse cx="36" cy="20" rx="10" ry="7" fill="#5D4037"/><rect x="26" y="17" width="20" height="6" rx="3" fill="#5D4037"/><rect x="12" y="52" width="48" height="28" rx="8" fill="#1565C0"/>';
+var girlSVG = '<rect width="72" height="72" rx="36" fill="#FCE4EC"/><circle cx="36" cy="26" r="13" fill="#FFCC80"/><path d="M26 18 Q36 9 46 18 Q46 12 36 10 Q26 12 26 18Z" fill="#C62828"/><path d="M23 21 Q26 15 36 13 Q46 15 49 21" stroke="#C62828" stroke-width="3" fill="none"/><ellipse cx="27" cy="30" rx="1.5" ry="2" fill="#F06292" opacity="0.5"/><ellipse cx="45" cy="30" rx="1.5" ry="2" fill="#F06292" opacity="0.5"/><rect x="12" y="52" width="48" height="28" rx="8" fill="#C62828"/>';
+var currentProfile = 0;
+function switchProfile(idx) {
+  currentProfile = idx;
+  var t = LANG[currentLang];
+  document.getElementById('pav-svg').innerHTML = idx === 0 ? boySVG : girlSVG;
+  document.getElementById('pname').textContent = idx === 0 ? t.boy1Full : t.girl1Full;
+  document.getElementById('pclass').textContent = idx === 0 ? t.boy1ClassSchool : t.girl1ClassSchool;
+  [0,1].forEach(function(i) {
+    document.getElementById('psb-' + i).classList.toggle('active', i === idx);
+    document.getElementById('info-stu-' + i).style.display = i === idx ? 'block' : 'none';
+  });
+}
+
+// ── QR Code ──
+var currentQR = 0;
+function switchQR(idx) {
+  currentQR = idx;
+  var t = LANG[currentLang];
+  [0,1].forEach(function(i) { document.getElementById('qrb-' + i).classList.toggle('active', i === idx); });
+  document.getElementById('qr-student-name').textContent = idx === 0 ? t.boy1Full : t.girl1Full;
+  document.getElementById('qr-student-meta').textContent = idx === 0 ? t.boy1QRMeta : t.girl1QRMeta;
+  document.getElementById('qr-id-pill').textContent = idx === 0 ? '66001234' : '66001235';
+  drawQR();
+}
+function drawQR() {
+  var canvas = document.getElementById('qr-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var size = 180, cells = 21, cell = size / cells;
+  var ids = ['66001234','66001235'];
+  var text = 'STU:' + ids[currentQR];
+  ctx.clearRect(0,0,size,size);
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,size,size);
+  ctx.fillStyle = '#1A1A2E';
+  var seed = 0;
+  for (var i = 0; i < text.length; i++) seed = (seed * 31 + text.charCodeAt(i)) & 0xFFFFFF;
+  function rand() { seed = (seed * 1664525 + 1013904223) & 0xFFFFFF; return seed / 0xFFFFFF; }
+  for (var r = 0; r < cells; r++) {
+    for (var c = 0; c < cells; c++) {
+      if ((r<8&&c<8)||(r<8&&c>=cells-8)||(r>=cells-8&&c<8)) continue;
+      if (rand() > 0.5) ctx.fillRect(c*cell, r*cell, cell-0.5, cell-0.5);
+    }
+  }
+  function finder(x,y) {
+    ctx.fillStyle='#1A1A2E'; ctx.fillRect(x,y,cell*7,cell*7);
+    ctx.fillStyle='#fff'; ctx.fillRect(x+cell,y+cell,cell*5,cell*5);
+    ctx.fillStyle='#1A1A2E'; ctx.fillRect(x+cell*2,y+cell*2,cell*3,cell*3);
+  }
+  finder(0,0); finder((cells-7)*cell,0); finder(0,(cells-7)*cell);
+  ctx.fillStyle='#fff'; ctx.fillRect(size/2-18,size/2-18,36,36);
+  ctx.fillStyle='#1565C0'; ctx.fillRect(size/2-14,size/2-14,28,28);
+  ctx.fillStyle='#fff'; ctx.font='bold 14px Inter,Sarabun,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('ST',size/2,size/2);
+}
 </script>
 </body>
 </html>
