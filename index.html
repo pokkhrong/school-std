@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SchoolTrack — ระบบติดตามการเข้าเรียน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1565C0;
+    --blue-light: #E3F2FD;
+    --blue-mid: #42A5F5;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --red: #C62828;
+    --red-light: #FFEBEE;
+    --amber: #E65100;
+    --amber-light: #FFF3E0;
+    --gray-bg: #F4F6F9;
+    --gray-card: #FFFFFF;
+    --gray-border: #E0E4EA;
+    --gray-text: #5F6368;
+    --gray-hint: #9AA0A6;
+    --text: #1A1A2E;
+    --radius: 14px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: #0D1B3E;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  /* ─── Phone shell ─── */
+  .phone {
+    width: 375px;
+    min-height: 780px;
+    background: var(--gray-bg);
+    border-radius: 36px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+  }
+
+  /* ─── Screen pages ─── */
+  .screen { display: none; flex-direction: column; height: 780px; }
+  .screen.active { display: flex; }
+
+  /* ─── LOGIN ─── */
+  #screen-login {
+    background: linear-gradient(160deg, #0D1B3E 0%, #1565C0 60%, #1E88E5 100%);
+    justify-content: space-between;
+    padding: 60px 32px 48px;
+  }
+  .login-logo { text-align: center; }
+  .login-logo .icon-circle {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+  }
+  .login-logo h1 { color: #fff; font-size: 26px; font-weight: 600; letter-spacing: 0.5px; }
+  .login-logo p { color: rgba(255,255,255,0.65); font-size: 14px; margin-top: 6px; }
+
+  .login-form { background: #fff; border-radius: 24px; padding: 28px 24px; }
+  .login-form h2 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .login-form .sub { font-size: 13px; color: var(--gray-text); margin-bottom: 24px; }
+
+  .field-label { font-size: 12px; color: var(--gray-text); margin-bottom: 6px; font-weight: 500; }
+  .field-input {
+    width: 100%; padding: 13px 16px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-border); font-family: 'Sarabun', sans-serif;
+    font-size: 16px; color: var(--text); background: #FAFBFC;
+    margin-bottom: 16px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .field-input:focus { border-color: var(--blue); background: #fff; }
+
+  .otp-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .otp-box {
+    flex: 1; height: 52px; border-radius: 10px;
+    border: 1.5px solid var(--gray-border); background: #FAFBFC;
+    text-align: center; font-size: 22px; font-weight: 600;
+    color: var(--text); font-family: 'Sarabun', sans-serif;
+    outline: none; transition: border-color 0.2s;
+  }
+  .otp-box:focus { border-color: var(--blue); background: #fff; }
+
+  .btn-primary {
+    width: 100%; padding: 15px; border-radius: var(--radius-sm);
+    background: var(--blue); color: #fff; border: none;
+    font-family: 'Sarabun', sans-serif; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-outline {
+    width: 100%; padding: 13px; border-radius: var(--radius-sm);
+    background: transparent; color: var(--blue); border: 1.5px solid var(--blue);
+    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; margin-top: 10px;
+  }
+
+  /* ─── Main app shell ─── */
+  #screen-app {
+    background: var(--gray-bg);
+    flex-direction: column;
+  }
+
+  .app-header {
+    background: linear-gradient(135deg, #0D1B3E 0%, #1565C0 100%);
+    padding: 48px 20px 20px;
+    flex-shrink: 0;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .header-greeting { color: rgba(255,255,255,0.7); font-size: 13px; }
+  .header-name { color: #fff; font-size: 18px; font-weight: 600; margin-top: 2px; }
+  .header-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; font-size: 14px; cursor: pointer;
+  }
+
+  .notif-pill {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 40px; padding: 8px 14px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+  }
+  .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #69F0AE; flex-shrink: 0; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+  .notif-pill-text { color: #fff; font-size: 13px; line-height: 1.3; }
+  .notif-pill-text strong { display: block; font-weight: 500; }
+  .notif-pill-time { color: rgba(255,255,255,0.6); font-size: 11px; }
+
+  .scroll-content { flex: 1; overflow-y: auto; padding: 16px 16px 80px; -webkit-overflow-scrolling: touch; }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ─── Section label ─── */
+  .section-lbl {
+    font-size: 11px; font-weight: 600; color: var(--gray-hint);
+    letter-spacing: 0.8px; text-transform: uppercase; margin: 0 0 10px;
+  }
+
+  /* ─── Student selector ─── */
+  .students-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .student-card {
+    flex: 1; background: var(--gray-card); border-radius: var(--radius);
+    border: 1.5px solid var(--gray-border); padding: 14px 10px;
+    text-align: center; cursor: pointer; transition: all 0.2s;
+  }
+  .student-card.sel { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,101,192,0.1); }
+  .stu-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 600; margin: 0 auto 8px;
+  }
+  .av-b { background: var(--blue-light); color: var(--blue); }
+  .av-p { background: #FCE4EC; color: #C62828; }
+  .stu-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .stu-class { font-size: 11px; color: var(--gray-text); margin: 2px 0 6px; }
+  .badge { font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: 500; display: inline-block; }
+  .badge-in { background: var(--green-light); color: var(--green); }
+  .badge-wait { background: var(--amber-light); color: var(--amber); }
+
+  /* ─── Summary cards ─── */
+  .summary-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }
+  .sum-card { background: var(--gray-card); border-radius: var(--radius-sm); border: 1px solid var(--gray-border); padding: 14px 8px; text-align: center; }
+  .sum-num { font-size: 26px; font-weight: 600; line-height: 1; }
+  .num-g { color: var(--green); }
+  .num-r { color: var(--red); }
+  .num-a { color: var(--amber); }
+  .sum-lbl { font-size: 11px; color: var(--gray-text); margin-top: 4px; }
+
+  /* ─── Timeline ─── */
+  .tl-card { background: var(--gray-card); border-radius: var(--radius); border: 1px solid var(--gray-border); padding: 16px; margin-bottom: 12px; }
+  .tl-card-date { font-size: 12px; color: var(--gray-text); font-weight: 500; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .tl-row { display: flex; align-items: center; gap: 12px; padding: 6px 0; }
+  .tl-row + .tl-row { border-top: 1px dashed var(--gray-border); margin-top: 2px; }
+  .tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .d-in { background: var(--green); box-shadow: 0 0 0 3px rgba(46,125,50,0.15); }
+  .d-out { background: var(--blue); box-shadow: 0 0 0 3px rgba(21,101,192,0.15); }
+  .d-wait { background: var(--gray-border); }
+  .tl-time { font-size: 14px; font-weight: 600; color: var(--text); min-width: 48px; }
+  .tl-desc { font-size: 13px; color: var(--gray-text); flex: 1; }
+  .tl-tag { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+  .tag-in { background: var(--green-light); color: var(--green); }
+  .tag-out { background: var(--blue-light); color: var(--blue); }
+  .tag-wait { background: #F5F5F5; color: var(--gray-hint); }
+
+  /* ─── Profile ─── */
+  .profile-hero {
+    background: linear-gradient(135deg, #0D1B3E, #1565C0);
+    padding: 48px 20px 24px;
+    text-align: center; flex-shrink: 0;
+  }
+  .profile-av {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 600; color: #fff;
+    margin: 0 auto 12px;
+  }
+  .profile-hero h2 { color: #fff; font-size: 20px; font-weight: 600; }
+  .profile-hero p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px; }
+
+  .profile-switcher { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+  .ps-btn {
+    padding: 6px 16px; border-radius: 20px; font-size: 12px;
+    font-family: 'Sarabun', sans-serif; cursor: pointer; font-weight: 500;
+    border: 1.5px solid rgba(255,255,255,0.35); color: rgba(255,255,255,0.8);
+    background: transparent; transition: all 0.2s;
+  }
+  .ps-btn.active { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.6); }
+
+  .info-card { background: var(--gray-card); border-radius: var(--radius); border: 1px solid var(--gray-border); overflow: hidden; margin-bottom: 12px; }
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; }
+  .info-row + .info-row { border-top: 1px solid var(--gray-border); }
+  .info-key { font-size: 13px; color: var(--gray-text); }
+  .info-val { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* ─── Bottom nav ─── */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 68px;
+    background: var(--gray-card);
+    border-top: 1px solid var(--gray-border);
+    display: flex; z-index: 10;
+    padding-bottom: 8px;
+  }
+  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; padding-top: 8px; }
+  .nav-icon { font-size: 20px; }
+  .nav-lbl { font-size: 10px; font-weight: 500; color: var(--gray-hint); transition: color 0.2s; }
+  .nav-btn.active .nav-lbl { color: var(--blue); }
+  .nav-indicator { width: 20px; height: 3px; border-radius: 2px; background: var(--blue); display: none; margin-top: 2px; }
+  .nav-btn.active .nav-indicator { display: block; }
+
+  /* ─── OTP step ─── */
+  #otp-step { display: none; }
+  #phone-step { display: block; }
+
+  /* ─── Tab ─── */
+  .tabs { display: flex; border-bottom: 1px solid var(--gray-border); margin-bottom: 16px; }
+  .tab { flex: 1; padding: 10px 0; text-align: center; font-size: 13px; color: var(--gray-text); cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ─── Animations ─── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .screen.active .animate { animation: fadeUp 0.3s ease both; }
+  .a1{animation-delay:.05s} .a2{animation-delay:.1s} .a3{animation-delay:.15s} .a4{animation-delay:.2s}
+
+  /* ─── Empty state dim ─── */
+  .dim { opacity: 0.4; }
+
+  /* ─── History page tabs ─── */
+  .hist-tab-content { display: none; }
+  .hist-tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ LOGIN SCREEN ════════════════ -->
+<div class="phone">
+  <div class="screen active" id="screen-login">
+    <div class="login-logo animate a1">
+      <div class="icon-circle">🏫</div>
+      <h1>SchoolTrack</h1>
+      <p>ระบบติดตามการเข้าเรียน</p>
+    </div>
+
+    <div class="login-form animate a2">
+      <!-- Step 1: Phone -->
+      <div id="phone-step">
+        <h2>เข้าสู่ระบบ</h2>
+        <p class="sub">สำหรับผู้ปกครองนักเรียน</p>
+        <div class="field-label">เบอร์โทรศัพท์</div>
+        <input class="field-input" type="tel" placeholder="0812345678" id="phone-input" maxlength="10">
+        <button class="btn-primary" onclick="showOtp()">รับรหัส OTP</button>
+        <p style="text-align:center;font-size:12px;color:var(--gray-hint);margin-top:14px;">
+          ระบบจะส่งรหัส 6 หลักไปยังเบอร์ที่กรอก
+        </p>
+      </div>
+
+      <!-- Step 2: OTP -->
+      <div id="otp-step">
+        <h2>ยืนยัน OTP</h2>
+        <p class="sub" id="otp-sub">ส่งรหัสไปยัง <strong>XXX</strong> แล้ว</p>
+        <div class="otp-row">
+          <input class="otp-box" maxlength="1" type="tel">
+          <input class="otp-box" maxlength="1" type="tel">
+          <input class="otp-box" maxlength="1" type="tel">
+          <input class="otp-box" maxlength="1" type="tel">
+          <input class="otp-box" maxlength="1" type="tel">
+          <input class="otp-box" maxlength="1" type="tel">
+        </div>
+        <button class="btn-primary" onclick="goToApp()">ยืนยัน &amp; เข้าใช้งาน</button>
+        <button class="btn-outline" onclick="backToPhone()">← เปลี่ยนเบอร์</button>
+      </div>
+    </div>
+  </div>
+
+<!-- ════════════════ APP SCREEN ════════════════ -->
+  <div class="screen" id="screen-app">
+
+    <!-- ── HOME PAGE ── -->
+    <div id="page-home" style="display:flex;flex-direction:column;height:100%;">
+      <div class="app-header">
+        <div class="header-top animate a1">
+          <div>
+            <div class="header-greeting">สวัสดีตอนเช้า 👋</div>
+            <div class="header-name">คุณสมศรี มีสุข</div>
+          </div>
+          <div class="header-avatar" onclick="switchTab('profile')">สม</div>
+        </div>
+        <div class="notif-pill animate a2">
+          <div class="notif-dot"></div>
+          <div class="notif-pill-text">
+            <strong>ด.ช. สมชาย เข้าโรงเรียนแล้ว</strong>
+            <span class="notif-pill-time">วันนี้ เวลา 07:42 น. — สแกน QR</span>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-content">
+        <div class="section-lbl animate a2">บุตรหลานของคุณ</div>
+        <div class="students-row animate a2">
+          <div class="student-card sel" id="sc-0" onclick="selectStu(0)">
+            <div class="stu-avatar av-b">สช</div>
+            <div class="stu-name">ด.ช. สมชาย</div>
+            <div class="stu-class">ป.4/2</div>
+            <span class="badge badge-in">มาเรียน</span>
+          </div>
+          <div class="student-card" id="sc-1" onclick="selectStu(1)">
+            <div class="stu-avatar av-p">สน</div>
+            <div class="stu-name">ด.ญ. สมหญิง</div>
+            <div class="stu-class">ป.2/1</div>
+            <span class="badge badge-wait">รอข้อมูล</span>
+          </div>
+        </div>
+
+        <!-- Summary for stu 0 -->
+        <div id="summary-0" class="animate a3">
+          <div class="section-lbl">สรุปเดือนเมษายน — ด.ช. สมชาย</div>
+          <div class="summary-row">
+            <div class="sum-card"><div class="sum-num num-g">18</div><div class="sum-lbl">มาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-r">1</div><div class="sum-lbl">ขาดเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-a">2</div><div class="sum-lbl">ลาเรียน</div></div>
+          </div>
+          <div class="section-lbl">บันทึกวันนี้</div>
+          <div class="tl-card">
+            <div class="tl-card-date">
+              <span>พฤหัสบดีที่ 24 เมษายน 2568</span>
+              <span class="badge badge-in">มาเรียน</span>
+            </div>
+            <div class="tl-row">
+              <div class="tl-dot d-in"></div>
+              <div class="tl-time">07:42</div>
+              <div class="tl-desc">เข้าโรงเรียน</div>
+              <div class="tl-tag tag-in">เข้า</div>
+            </div>
+            <div class="tl-row">
+              <div class="tl-dot d-wait"></div>
+              <div class="tl-time" style="color:var(--gray-hint);">--:--</div>
+              <div class="tl-desc" style="color:var(--gray-hint);">รอข้อมูลออก</div>
+              <div class="tl-tag tag-wait">รอ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary for stu 1 -->
+        <div id="summary-1" class="animate a3" style="display:none;">
+          <div class="section-lbl">สรุปเดือนเมษายน — ด.ญ. สมหญิง</div>
+          <div class="summary-row">
+            <div class="sum-card"><div class="sum-num num-g">17</div><div class="sum-lbl">มาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-r">2</div><div class="sum-lbl">ขาดเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-a">1</div><div class="sum-lbl">ลาเรียน</div></div>
+          </div>
+          <div class="section-lbl">บันทึกวันนี้</div>
+          <div class="tl-card">
+            <div class="tl-card-date"><span>พฤหัสบดีที่ 24 เมษายน 2568</span></div>
+            <div class="tl-row">
+              <div class="tl-dot d-wait"></div>
+              <div class="tl-time" style="color:var(--gray-hint);">--:--</div>
+              <div class="tl-desc" style="color:var(--gray-hint);">ยังไม่มีข้อมูล</div>
+              <div class="tl-tag tag-wait">รอ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav" id="bnav-home">
+        <div class="nav-btn active" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">หน้าหลัก</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl">ประวัติ</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl">โปรไฟล์</div><div class="nav-indicator"></div></div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY PAGE ── -->
+    <div id="page-history" style="display:none;flex-direction:column;height:100%;">
+      <div class="app-header">
+        <div class="header-top">
+          <div>
+            <div class="header-greeting">ประวัติการเข้าเรียน</div>
+            <div class="header-name">ด.ช. สมชาย มีสุข</div>
+          </div>
+          <div class="header-avatar" onclick="switchTab('profile')">สม</div>
+        </div>
+      </div>
+      <div class="scroll-content" style="padding-top:12px;">
+        <div class="tabs">
+          <div class="tab active" onclick="switchHistTab(0,this)">สัปดาห์นี้</div>
+          <div class="tab" onclick="switchHistTab(1,this)">เดือนนี้</div>
+          <div class="tab" onclick="switchHistTab(2,this)">เดือนก่อน</div>
+        </div>
+
+        <div class="hist-tab-content active" id="hist-0">
+          <div class="tl-card">
+            <div class="tl-card-date"><span>พฤหัสบดีที่ 24 เม.ย.</span><span class="badge badge-in">มาเรียน</span></div>
+            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:42</div><div class="tl-desc">เข้าโรงเรียน</div><div class="tl-tag tag-in">เข้า</div></div>
+            <div class="tl-row"><div class="tl-dot d-wait"></div><div class="tl-time" style="color:var(--gray-hint)">--:--</div><div class="tl-desc" style="color:var(--gray-hint)">รอข้อมูล</div><div class="tl-tag tag-wait">รอ</div></div>
+          </div>
+          <div class="tl-card">
+            <div class="tl-card-date"><span>พุธที่ 23 เม.ย.</span><span class="badge badge-in">มาเรียน</span></div>
+            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:38</div><div class="tl-desc">เข้าโรงเรียน</div><div class="tl-tag tag-in">เข้า</div></div>
+            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">15:55</div><div class="tl-desc">ออกจากโรงเรียน</div><div class="tl-tag tag-out">ออก</div></div>
+          </div>
+          <div class="tl-card">
+            <div class="tl-card-date"><span>อังคารที่ 22 เม.ย.</span><span class="badge badge-in">มาเรียน</span></div>
+            <div class="tl-row"><div class="tl-dot d-in"></div><div class="tl-time">07:51</div><div class="tl-desc">เข้าโรงเรียน</div><div class="tl-tag tag-in">เข้า</div></div>
+            <div class="tl-row"><div class="tl-dot d-out"></div><div class="tl-time">16:02</div><div class="tl-desc">ออกจากโรงเรียน</div><div class="tl-tag tag-out">ออก</div></div>
+          </div>
+          <div class="tl-card">
+            <div class="tl-card-date"><span>จันทร์ที่ 21 เม.ย.</span><span class="badge" style="background:#EDE7F6;color:#4527A0;">วันหยุด</span></div>
+            <div class="tl-row"><div class="tl-dot" style="background:#9E9E9E"></div><div class="tl-time" style="color:var(--gray-hint)">—</div><div class="tl-desc" style="color:var(--gray-hint)">วันหยุดราชการ</div></div>
+          </div>
+        </div>
+
+        <div class="hist-tab-content" id="hist-1">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+            <div class="sum-card"><div class="sum-num num-g">18</div><div class="sum-lbl">มาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-r">1</div><div class="sum-lbl">ขาดเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-a">2</div><div class="sum-lbl">ลาเรียน</div></div>
+          </div>
+          <div class="tl-card">
+            <div class="tl-card-date"><span>17 เม.ย. — ขาดเรียน</span><span class="badge" style="background:var(--red-light);color:var(--red);">ขาด</span></div>
+            <div class="tl-row"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-time" style="color:var(--red)">—</div><div class="tl-desc">ไม่มีข้อมูลการเข้าเรียน</div></div>
+          </div>
+          <div class="tl-card">
+            <div class="tl-card-date"><span>14 เม.ย. — ลาเรียน</span><span class="badge badge-wait">ลา</span></div>
+            <div class="tl-row"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-time" style="color:var(--amber)">—</div><div class="tl-desc">ใบลาป่วย</div></div>
+          </div>
+        </div>
+
+        <div class="hist-tab-content" id="hist-2">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+            <div class="sum-card"><div class="sum-num num-g">20</div><div class="sum-lbl">มาเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-r">0</div><div class="sum-lbl">ขาดเรียน</div></div>
+            <div class="sum-card"><div class="sum-num num-a">1</div><div class="sum-lbl">ลาเรียน</div></div>
+          </div>
+          <p style="text-align:center;color:var(--gray-hint);font-size:13px;padding:20px 0;">เดือนมีนาคม 2568<br>มาเรียนสม่ำเสมอ 🎉</p>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">หน้าหลัก</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn active" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl">ประวัติ</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl">โปรไฟล์</div><div class="nav-indicator"></div></div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE PAGE ── -->
+    <div id="page-profile" style="display:none;flex-direction:column;height:100%;">
+      <div class="profile-hero">
+        <div id="pav" class="profile-av">สช</div>
+        <h2 id="pname">ด.ช. สมชาย มีสุข</h2>
+        <p id="pclass">ชั้น ป.4/2 · โรงเรียนสาธิต</p>
+        <div class="profile-switcher">
+          <button class="ps-btn active" id="psb-0" onclick="switchProfile(0)">ด.ช. สมชาย</button>
+          <button class="ps-btn" id="psb-1" onclick="switchProfile(1)">ด.ญ. สมหญิง</button>
+        </div>
+      </div>
+      <div class="scroll-content" style="padding-top:16px;">
+        <div class="section-lbl" id="profile-detail-lbl">ข้อมูลนักเรียน</div>
+        <div class="info-card" id="info-stu-0">
+          <div class="info-row"><span class="info-key">รหัสนักเรียน</span><span class="info-val">66001234</span></div>
+          <div class="info-row"><span class="info-key">ชั้นเรียน</span><span class="info-val">ป.4/2</span></div>
+          <div class="info-row"><span class="info-key">ครูประจำชั้น</span><span class="info-val">ครูวิภา ใจดี</span></div>
+          <div class="info-row"><span class="info-key">เลขที่</span><span class="info-val">15</span></div>
+        </div>
+        <div class="info-card" id="info-stu-1" style="display:none;">
+          <div class="info-row"><span class="info-key">รหัสนักเรียน</span><span class="info-val">66001235</span></div>
+          <div class="info-row"><span class="info-key">ชั้นเรียน</span><span class="info-val">ป.2/1</span></div>
+          <div class="info-row"><span class="info-key">ครูประจำชั้น</span><span class="info-val">ครูนภา สดใส</span></div>
+          <div class="info-row"><span class="info-key">เลขที่</span><span class="info-val">8</span></div>
+        </div>
+        <div class="section-lbl" style="margin-top:8px;">ข้อมูลผู้ปกครอง</div>
+        <div class="info-card">
+          <div class="info-row"><span class="info-key">ชื่อผู้ปกครอง</span><span class="info-val">คุณสมศรี มีสุข</span></div>
+          <div class="info-row"><span class="info-key">เบอร์โทรศัพท์</span><span class="info-val">08X-XXX-XXXX</span></div>
+          <div class="info-row"><span class="info-key">ความสัมพันธ์</span><span class="info-val">มารดา</span></div>
+        </div>
+        <button class="btn-outline" style="margin-top:8px;border-color:var(--gray-border);color:var(--gray-text);" onclick="logout()">
+          ออกจากระบบ
+        </button>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-btn" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">หน้าหลัก</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn" onclick="switchTab('history')"><div class="nav-icon">📋</div><div class="nav-lbl">ประวัติ</div><div class="nav-indicator"></div></div>
+        <div class="nav-btn active" onclick="switchTab('profile')"><div class="nav-icon">👤</div><div class="nav-lbl">โปรไฟล์</div><div class="nav-indicator"></div></div>
+      </div>
+    </div>
+
+  </div><!-- /screen-app -->
+</div><!-- /phone -->
+
+<script>
+  // ── Login flow ──
+  function showOtp() {
+    var ph = document.getElementById('phone-input').value || '08X-XXX-XXXX';
+    document.getElementById('otp-sub').innerHTML = 'ส่งรหัสไปยัง <strong>' + ph + '</strong> แล้ว';
+    document.getElementById('phone-step').style.display = 'none';
+    document.getElementById('otp-step').style.display = 'block';
+    // OTP auto-advance
+    var boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach(function(box, i) {
+      box.addEventListener('input', function() {
+        if (this.value.length === 1 && i < boxes.length - 1) boxes[i+1].focus();
+      });
+    });
+  }
+  function backToPhone() {
+    document.getElementById('phone-step').style.display = 'block';
+    document.getElementById('otp-step').style.display = 'none';
+  }
+  function goToApp() {
+    document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('screen-app').classList.add('active');
+    switchTab('home');
+  }
+  function logout() {
+    document.getElementById('screen-app').classList.remove('active');
+    document.getElementById('screen-login').classList.add('active');
+    document.getElementById('phone-step').style.display = 'block';
+    document.getElementById('otp-step').style.display = 'none';
+    document.getElementById('phone-input').value = '';
+  }
+
+  // ── Tab switching ──
+  function switchTab(tab) {
+    ['home','history','profile'].forEach(function(t) {
+      var pg = document.getElementById('page-' + t);
+      pg.style.display = t === tab ? 'flex' : 'none';
+    });
+  }
+
+  // ── Student select on home ──
+  function selectStu(idx) {
+    [0,1].forEach(function(i) {
+      document.getElementById('sc-' + i).classList.toggle('sel', i === idx);
+      document.getElementById('summary-' + i).style.display = i === idx ? 'block' : 'none';
+    });
+  }
+
+  // ── History tabs ──
+  function switchHistTab(idx, el) {
+    document.querySelectorAll('.hist-tab-content').forEach(function(c,i) {
+      c.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.tabs .tab').forEach(function(t) { t.classList.remove('active'); });
+    el.classList.add('active');
+  }
+
+  // ── Profile switcher ──
+  var profiles = [
+    { av:'สช', name:'ด.ช. สมชาย มีสุข', cls:'ชั้น ป.4/2 · โรงเรียนสาธิต' },
+    { av:'สน', name:'ด.ญ. สมหญิง มีสุข', cls:'ชั้น ป.2/1 · โรงเรียนสาธิต' }
+  ];
+  function switchProfile(idx) {
+    var p = profiles[idx];
+    document.getElementById('pav').textContent = p.av;
+    document.getElementById('pname').textContent = p.name;
+    document.getElementById('pclass').textContent = p.cls;
+    [0,1].forEach(function(i) {
+      document.getElementById('psb-' + i).classList.toggle('active', i === idx);
+      document.getElementById('info-stu-' + i).style.display = i === idx ? 'block' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
