@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SchoolTrack — Attendance Tracking System</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init("zN5_n7JPkFbh4rhsC");</script>
 <style>
   :root {
     --blue:#1565C0; --blue-light:#E3F2FD; --blue-mid:#42A5F5;
@@ -243,10 +245,16 @@
       <div id="phone-step">
         <h2 data-i18n="loginTitle">Sign In</h2>
         <p class="sub" data-i18n="loginSub">For student parents / guardians</p>
-        <div class="field-label" data-i18n="phoneLabel">Phone Number</div>
-        <input class="field-input" type="tel" placeholder="0812345678" id="phone-input" maxlength="10">
-        <button class="btn-primary" onclick="showOtp()" data-i18n="getOtp">Get OTP Code</button>
-        <p style="text-align:center;font-size:12px;color:var(--gray-hint);margin-top:14px;" data-i18n="otpNote">A 6-digit code will be sent to your number</p>
+        <div class="field-label" data-i18n="emailLabel">Email Address</div>
+        <input class="field-input" type="email" placeholder="parent@email.com" id="phone-input">
+        <button class="btn-primary" id="btn-get-otp" onclick="showOtp()" data-i18n="getOtp">Get OTP Code</button>
+        <div id="otp-sending" style="display:none;text-align:center;padding:12px 0;">
+          <div style="font-size:13px;color:var(--blue);">⏳ <span data-i18n="sending">Sending OTP...</span></div>
+        </div>
+        <div id="otp-error" style="display:none;background:#FFEBEE;border-radius:10px;padding:10px 14px;margin-top:12px;">
+          <p style="font-size:12px;color:var(--red);margin:0;" id="otp-error-msg"></p>
+        </div>
+        <p style="text-align:center;font-size:12px;color:var(--gray-hint);margin-top:14px;" data-i18n="otpNote">A 6-digit code will be sent to your email</p>
       </div>
       <div id="otp-step">
         <h2 data-i18n="otpTitle">Verify OTP</h2>
@@ -259,8 +267,11 @@
           <input class="otp-box" maxlength="1" type="tel">
           <input class="otp-box" maxlength="1" type="tel">
         </div>
-        <button class="btn-primary" onclick="goToApp()" data-i18n="verifyBtn">Verify &amp; Sign In</button>
-        <button class="btn-outline" onclick="backToPhone()" data-i18n="changePhone">← Change Number</button>
+        <div id="verify-error" style="display:none;background:#FFEBEE;border-radius:10px;padding:10px 14px;margin-bottom:12px;">
+          <p style="font-size:12px;color:var(--red);margin:0;" data-i18n="otpWrong">Incorrect OTP. Please try again.</p>
+        </div>
+        <button class="btn-primary" onclick="verifyOtp()" data-i18n="verifyBtn">Verify &amp; Sign In</button>
+        <button class="btn-outline" onclick="backToPhone()" data-i18n="changePhone">← Change Email</button>
       </div>
     </div>
   </div></div>
@@ -525,8 +536,8 @@
 var LANG = {
   en: {
     tagline:'Attendance Tracking System', loginTitle:'Sign In', loginSub:'For student parents / guardians',
-    phoneLabel:'Phone Number', getOtp:'Get OTP Code', otpNote:'A 6-digit code will be sent to your number',
-    otpTitle:'Verify OTP', otpSentTo:'Code sent to', verifyBtn:'Verify & Sign In', changePhone:'← Change Number',
+    phoneLabel:'Phone Number', emailLabel:'Email Address', getOtp:'Get OTP Code', otpNote:'A 6-digit code will be sent to your email', sending:'Sending OTP...', otpWrong:'Incorrect OTP. Please try again.',
+    otpTitle:'Verify OTP', otpSentTo:'Code sent to', verifyBtn:'Verify & Sign In', changePhone:'← Change Email',
     greeting:'Good Morning 👋', parentName:'Mrs. Somsri Meesuk',
     notifMsg:'Somchai has arrived at school', notifTime:'Today at 07:42 — QR Scan',
     yourChildren:'Your Children',
@@ -560,8 +571,8 @@ var LANG = {
   },
   th: {
     tagline:'ระบบติดตามการเข้าเรียน', loginTitle:'เข้าสู่ระบบ', loginSub:'สำหรับผู้ปกครองนักเรียน',
-    phoneLabel:'เบอร์โทรศัพท์', getOtp:'รับรหัส OTP', otpNote:'ระบบจะส่งรหัส 6 หลักไปยังเบอร์ที่กรอก',
-    otpTitle:'ยืนยัน OTP', otpSentTo:'ส่งรหัสไปยัง', verifyBtn:'ยืนยัน & เข้าใช้งาน', changePhone:'← เปลี่ยนเบอร์',
+    phoneLabel:'เบอร์โทรศัพท์', emailLabel:'อีเมลของคุณ', getOtp:'รับรหัส OTP', otpNote:'ระบบจะส่งรหัส 6 หลักไปยังอีเมลที่กรอก', sending:'กำลังส่ง OTP...', otpWrong:'รหัส OTP ไม่ถูกต้อง กรุณาลองใหม่',
+    otpTitle:'ยืนยัน OTP', otpSentTo:'ส่งรหัสไปยัง', verifyBtn:'ยืนยัน & เข้าใช้งาน', changePhone:'← เปลี่ยนอีเมล',
     greeting:'สวัสดีตอนเช้า 👋', parentName:'คุณสมศรี มีสุข',
     notifMsg:'ด.ช. สมชาย เข้าโรงเรียนแล้ว', notifTime:'วันนี้ เวลา 07:42 น. — สแกน QR',
     yourChildren:'บุตรหลานของคุณ',
@@ -653,24 +664,103 @@ function setLang(lang) {
 }
 
 // ══════════════════════════════════════════
-//  Login flow
+//  Login flow — EmailJS OTP
 // ══════════════════════════════════════════
+var _generatedOtp = '';
+var _otpExpiry    = 0;
+
+function generateOtp() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
 function showOtp() {
-  var ph = document.getElementById('phone-input').value || 'XXX';
+  var email = document.getElementById('phone-input').value.trim();
   var t = LANG[currentLang];
-  document.getElementById('otp-sub').innerHTML = t.otpSentTo + ' <strong>' + ph + '</strong>';
-  document.getElementById('phone-step').style.display = 'none';
-  document.getElementById('otp-step').style.display = 'block';
-  var boxes = document.querySelectorAll('.otp-box');
-  boxes.forEach(function(box, i) {
-    box.addEventListener('input', function() {
-      if (this.value.length === 1 && i < boxes.length - 1) boxes[i+1].focus();
+
+  // Validate email
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showLoginError(currentLang === 'th' ? 'กรุณากรอกอีเมลให้ถูกต้อง' : 'Please enter a valid email address.');
+    return;
+  }
+  hideLoginError();
+
+  // Generate OTP
+  _generatedOtp = generateOtp();
+  _otpExpiry    = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+  // Show sending state
+  document.getElementById('btn-get-otp').disabled = true;
+  document.getElementById('otp-sending').style.display = 'block';
+
+  // Send via EmailJS
+  emailjs.send('service_j7p7flj', 'template_zfdxde3', {
+    passcode: _generatedOtp,
+    email:    email,
+    to_email: email
+  })
+  .then(function() {
+    document.getElementById('otp-sending').style.display = 'none';
+    document.getElementById('btn-get-otp').disabled = false;
+    // Show OTP step
+    document.getElementById('otp-sub').innerHTML =
+      t.otpSentTo + ' <strong>' + email + '</strong>';
+    document.getElementById('phone-step').style.display = 'none';
+    document.getElementById('otp-step').style.display   = 'block';
+    document.getElementById('verify-error').style.display = 'none';
+    // Setup OTP boxes auto-advance
+    var boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach(function(box) { box.value = ''; });
+    boxes.forEach(function(box, i) {
+      box.addEventListener('input', function() {
+        if (this.value.length === 1 && i < boxes.length - 1) boxes[i+1].focus();
+      });
     });
+    setTimeout(function(){ boxes[0].focus(); }, 100);
+  })
+  .catch(function(err) {
+    document.getElementById('otp-sending').style.display = 'none';
+    document.getElementById('btn-get-otp').disabled = false;
+    showLoginError(currentLang === 'th'
+      ? 'ส่ง OTP ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง'
+      : 'Failed to send OTP. Please try again.');
+    console.error('EmailJS error:', err);
   });
 }
+
+function verifyOtp() {
+  var boxes    = document.querySelectorAll('.otp-box');
+  var entered  = Array.from(boxes).map(function(b){ return b.value; }).join('');
+  var verifyEl = document.getElementById('verify-error');
+
+  if (entered.length < 6) {
+    verifyEl.style.display = 'block'; return;
+  }
+  if (Date.now() > _otpExpiry) {
+    verifyEl.querySelector('p').textContent =
+      currentLang === 'th' ? 'รหัส OTP หมดอายุแล้ว กรุณาขอใหม่' : 'OTP expired. Please request a new one.';
+    verifyEl.style.display = 'block'; return;
+  }
+  if (entered !== _generatedOtp) {
+    verifyEl.style.display = 'block'; return;
+  }
+  // ✅ OTP Correct
+  verifyEl.style.display = 'none';
+  goToApp();
+}
+
+function showLoginError(msg) {
+  var el = document.getElementById('otp-error');
+  document.getElementById('otp-error-msg').textContent = msg;
+  el.style.display = 'block';
+}
+function hideLoginError() {
+  document.getElementById('otp-error').style.display = 'none';
+}
+
 function backToPhone() {
   document.getElementById('phone-step').style.display = 'block';
-  document.getElementById('otp-step').style.display = 'none';
+  document.getElementById('otp-step').style.display   = 'none';
+  hideLoginError();
 }
 function goToApp() {
   document.getElementById('screen-login').classList.remove('active');
@@ -683,8 +773,10 @@ function logout() {
   document.getElementById('screen-app').classList.remove('active');
   document.getElementById('screen-login').classList.add('active');
   document.getElementById('phone-step').style.display = 'block';
-  document.getElementById('otp-step').style.display = 'none';
+  document.getElementById('otp-step').style.display   = 'none';
   document.getElementById('phone-input').value = '';
+  _generatedOtp = '';
+  hideLoginError();
 }
 
 // ── Tab switching ──
